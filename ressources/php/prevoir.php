@@ -2,4 +2,9 @@
 
   $_SESSION['mode'] = 'prevoir';
   $_SESSION['prevoir'] = $_POST['text'];
+
+  $GLOBALS['db']->request(
+    'UPDATE students SET prevoir = ? WHERE login = ?',
+    array($_SESSION['prevoir'], $_SESSION['login'])
+  );
 ?>

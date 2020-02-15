@@ -60,6 +60,7 @@
       $_SESSION['uvs'] = $infos['uvs'];
       $_SESSION['status'] = $infos['status'];
       $_SESSION['mode'] = $infos['mode'];
+      $_SESSION['prevoir'] = $infos['prevoir'];
 
       if (isset($_GET['week']) && is_string($_GET['week']) && isAGoodDate($_GET['week']))
         $_SESSION['week'] = $_GET['week'];
