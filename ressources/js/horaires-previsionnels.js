@@ -61,7 +61,7 @@ text.oninput = () => {
       text.scrollIntoView()
     }
 
-    let poss_count = Object.values(all_courses).map(c => c.length).reduce((x, y) => x * y)
+    // const poss_count = Object.values(all_courses).map(c => c.length).reduce((x, y) => x * y)
 
     console.time("possibilities")
     prevoirPossibilities = possibilities(all_courses)
@@ -74,12 +74,6 @@ text.oninput = () => {
     stats(prevoirValidPossibilities)
     prevoirValidPossibilities.sort((a, b) =>
       (b.free_days - a.free_days) || (a.num - b.num))
-
-    console.time("rendering")
-    let html = `<h2>EDTs (triés par nombre de jours libres)</h2>` + prevoirValidPossibilities.map(renderTimetable).join("")
-    console.timeEnd("rendering")
-    console.time("innerHTML")
-    console.timeEnd("innerHTML")
 
     err.innerHTML = `${prevoirValidPossibilities.length} valides / ${prevoirPossibilities.length} possibilités`
     $('#prevoirButton').prop('disabled', false);
@@ -99,7 +93,7 @@ function parseCourses(text) {
     m = m.filter(function (val) {
       return val !== undefined;
     });
-    let [_, uv, type, day, h_start, h_end, room, period] = m
+    const [, uv, type, day, h_start, h_end, room, period] = m
     console.log(m)
     let [hs, ms] = h_start.split(":"); hs = +hs + +ms / 60
     let [he, me] = h_end.split(":"); he = +he + +me / 60
@@ -116,7 +110,7 @@ function parseCourses(text) {
     m = m.filter(function (val) {
       return val !== undefined;
     });
-    let [_, uv, type, room, day, h_start, h_end, period] = m
+    let [, uv, type, room, day, h_start, h_end, period] = m
     if (uv == 'TX00' || uv == 'PR00')
       continue
     console.log(m)
@@ -140,10 +134,6 @@ function possibilities(courses, acc = [[]]) {
   let keys = Object.keys(courses)
   if (keys.length) {
     let first = courses[keys[0]]
-    /*console.dir({
-        first,
-        acc
-    })//*/
     acc = [].concat(...first.map(poss => acc.map(a => a.concat(poss))))
     delete courses[keys[0]]
     return possibilities(courses, acc)
@@ -168,7 +158,7 @@ function isValid(timetable) {
   return true
 }
 
-function stats(timetables, poss_count) {
+function stats(timetables) {
   const free_days = [0, 0, 0, 0, 0, 0, 0]
   const N = timetables.length
   const p = x => `${(x / N * 100).toPrecision(3)}% (${x}/${N})`
