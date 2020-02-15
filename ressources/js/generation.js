@@ -90,6 +90,10 @@ var generatePrevoir = function() {
       generatePrevoirPossibility();
     }
   });
+
+  if (text.value.length > 0) {
+    text.oninput();
+  }
 };
 
 var generateSubMenuPrevoir = function () {
@@ -97,7 +101,7 @@ var generateSubMenuPrevoir = function () {
   $('#affichage_prevoir').css('display', 'block');
   $('#prevoirPossibilities').empty();
 
-  $.each(prevoirValidPossibilities, function (index, possibility) {
+  $.each(prevoirValidPossibilities.slice(0, 50), function (index, possibility) {
     $('<div></div>').attr('id', 'printed-' + index).append($('<button></button>').html('<span>Cal n°' + possibility.num + ' - ' + possibility.free_days + ' jours libres</span>').css('color', prevoirIndex === index ? '#228822' : '').on('click', function () {
       prevoirIndex = index;
 

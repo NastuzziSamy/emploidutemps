@@ -80,13 +80,12 @@ text.oninput = () => {
   console.timeEnd("on input")
 }
 
-if (text.value.length > 0) {
-  text.oninput();
-}
-
 function parseCourses(text) {
   let courses = {}
   while (m = re.exec(text)) {
+    m = m.filter(function (val) {
+      return val !== undefined;
+    });
     let [_, uv, type, day, h_start, h_end, room, period] = m
     console.log(m)
     let [hs, ms] = h_start.split(":"); hs = +hs + +ms / 60
@@ -101,6 +100,9 @@ function parseCourses(text) {
   }
 
   while (m = re_test.exec(text)) {
+    m = m.filter(function (val) {
+      return val !== undefined;
+    });
     let [_, uv, type, room, day, h_start, h_end, period] = m
     if (uv == 'TX00' || uv == 'PR00')
       continue

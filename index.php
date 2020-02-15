@@ -59,15 +59,17 @@
       <div id='modeText'>
         Mode:
       </div>
-      <div class='sub-menu' <?php if ($_SESSION['extern']) {
-                              echo 'style="display:none"';
-                            } ?>>
+      <div class='sub-menu'>
         <div>
           Semaine type:
         </div>
-        <input name='mode' id='mode_classique' type='radio' onClick='changeMode("classique");'><label for='mode_classique'> Classique</label><br />
-        <input name='mode' id='mode_comparer' type='radio' onClick='changeMode("comparer");'><label for='mode_comparer'> Comparer</label><br />
-        <input name='mode' id='mode_modifier' type='radio' onClick='changeMode("modifier");'><label for='mode_modifier'> Modifier</label><br />
+        <span <?php if ($_SESSION['extern']) {
+                echo 'style="display:none"';
+              } ?>> 
+          <input name='mode' id='mode_classique' type='radio' onClick='changeMode("classique");'><label for='mode_classique'> Classique</label><br />
+          <input name='mode' id='mode_comparer' type='radio' onClick='changeMode("comparer");'><label for='mode_comparer'> Comparer</label><br />
+          <input name='mode' id='mode_modifier' type='radio' onClick='changeMode("modifier");'><label for='mode_modifier'> Modifier</label><br />
+        </span>
         <input name='mode' id='mode_prevoir' type='radio' onClick='promptPrevoir();'><label for='mode_prevoir'> Prévoir</label><br />
       </div>
       <div class='sub-menu'>
