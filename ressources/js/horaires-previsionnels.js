@@ -15,8 +15,21 @@ if (navigator.platform.includes("Linux")) {
 const text = document.getElementById("prevoirText")
 const err = document.getElementById("prevoirInfo")
 const estats = document.getElementById("prevoirStats")
-const re = /([A-Z0-9]{3,6})\s+(Cours|TD|TP)\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([A-Z0-9]+)\s+([\w ]+)/g
-const re_test = /([A-Z0-9]{3,6})\s+(Cours|TD|TP) (\([A-Z](?: \d+)?\))?\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([\w ]+)/g
+
+// exemples :
+// BL22	Cours	Mercredi	16:30	18:30	FA100	hebdomadaire
+// BL22	TD    Lundi	    16:30	18:30	FA404	hebdomadaire
+// BL22	TP    Jeudi	    8:00	12:00	RJ200	tous les 15 jours
+const re =
+  /([A-Z0-9]{3,6})\s+(Cours|TD|TP)\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([A-Z0-9]+)\s+([\w ]+)/g
+
+// exemples :
+// BL22	Cours (C)	Mercredi	16:30	18:30	Semaine A et B
+// BL22	TD (D 1)	Lundi	    16:30	18:30	Semaine A et B
+// BL22	TP (T 1)	Jeudi	    08:00	12:00	A
+const re_test =
+  /([A-Z0-9]{3,6})\s+(Cours|TD|TP) (\([A-Z](?: \d+)?\))?\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([\w ]+)/g
+
 const DAYS = {
   Lundi: 0,
   Mardi: 1,
