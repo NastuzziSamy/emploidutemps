@@ -28,7 +28,7 @@ const re =
 // BL22	TD (D 1)	Lundi	    16:30	18:30	Semaine A et B
 // BL22	TP (T 1)	Jeudi	    08:00	12:00	A
 const re_test =
-  /([A-Z0-9]{3,6})\s+(Cours|TD|TP) (\([A-Z](?: \d+)?\))?\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([\w ]+)/g
+  /([A-Z0-9]{3,6})\s+(Cours|TD|TP) (\([A-Z](?: \d+)?\))\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([\w ]+)/g
 
 const DAYS = {
   Lundi: 0,
