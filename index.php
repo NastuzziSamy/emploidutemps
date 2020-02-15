@@ -40,14 +40,13 @@
         Si vous avez des UVs avec beaucoup de TD et TP, le nombre de combinaisons peut vite exploser ! C'est normal si l'affichage prend un peu de temps. La gestion des cours tous les 15 jours est assez sommaire également, si vous avez 3 créneaux en même temps ça risque de se superposer.
       </p>
 
-      <textarea name="" id="text" rows="5" placeholder="→ Copiez vos horaires ici ←"><?php if (isset($_SESSION['prevoir'])) echo $_SESSION['prevoir']; ?></textarea>
-      <div class="parameters">
-        <!-- <button onClick="generatePrve">Générer</button> -->
-      </div>
+      <textarea name="prevoirText" id="prevoirText" rows="5" placeholder="→ Copiez vos horaires ici ←"><?php if (isset($_SESSION['prevoir'])) echo $_SESSION['prevoir']; ?></textarea>
+      <p class="center" id="prevoirInfo"></p>
+      <p id="prevoirStats"></p>
 
-      <p class="center" id="err"></p>
-      <p id="stats"></p>
-      <div id="render"></div>
+      <div class="parameters">
+        <button id="prevoirButton" onClick="generatePrevoir()" disabled>Générer</button>
+      </div>
     </div>
   </div>
 
@@ -107,6 +106,13 @@
       <div>
         <button id='eventTool' onClick="delActive(Object.keys(window.active))"><i class="fa fa-calendar-minus-o" aria-hidden="true"></i> Désafficher tout le monde</button>
       </div>
+    </div>
+    <div id='affichage_prevoir' style='display: none;' class='menu sub-menu'>
+      <div id='prevoirStatText'></div>
+      <div>
+        <button onClick="promptPrevoir()"><i class="fa fa-calendar-o" aria-hidden="true"></i> Prévoir un autre calendrier</button>
+      </div>
+      <div id='prevoirPossibilities'></div>
     </div>
     <div id='affichage_tools' class="menu sub-menu">
       Outils:

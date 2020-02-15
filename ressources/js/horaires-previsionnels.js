@@ -12,10 +12,9 @@ if (navigator.platform.includes("Linux")) {
   // cv.innerHTML = '^V'
 }
 
-const text = document.getElementById("text")
-const err = document.getElementById("err")
-const estats = document.getElementById("stats")
-const erender = document.getElementById("render")
+const text = document.getElementById("prevoirText")
+const err = document.getElementById("prevoirInfo")
+const estats = document.getElementById("prevoirStats")
 const re = /([A-Z0-9]{3,6})\s+(Cours|TD|TP)\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([A-Z0-9]+)\s+([\w ]+)/g
 const re_test = /([A-Z0-9]{3,6})\s+(Cours|TD|TP) (\([A-Z](?: \d+)?\))?\s+(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi)\s+(\d+:\d+)\s+(\d+:\d+)\s+([\w ]+)/g
 const DAYS = {
@@ -27,11 +26,13 @@ const DAYS = {
   Samedi: 5
 }
 const WIDTH = 120
+var prevoirPossibilities = [];
+var prevoirValidPossibilities = [];
+var prevoirIndex = 0;
 
-text.oninput = (event) => {
+text.oninput = () => {
   console.time("on input")
   try {
-    erender.innerHTML = ""
     err.innerHTML = "calcul en cours..."
 
     console.time("parseCourses")
@@ -43,38 +44,44 @@ text.oninput = (event) => {
       return
     }
     else {
-      const text = document.getElementById('text')
+      const text = document.getElementById('prevoirText')
       text.scrollIntoView()
     }
 
     let poss_count = Object.values(all_courses).map(c => c.length).reduce((x, y) => x * y)
 
     console.time("possibilities")
-    let all_timetables = possibilities(all_courses)
+    prevoirPossibilities = possibilities(all_courses)
     console.timeEnd("possibilities")
 
     console.time("filter valid")
-    let v_timetables = all_timetables.filter(isValid)
+    prevoirValidPossibilities = prevoirPossibilities.filter(isValid)
     console.timeEnd("filter valid")
 
-    stats(v_timetables)
-    v_timetables.sort((a, b) =>
+    stats(prevoirValidPossibilities)
+    prevoirValidPossibilities.sort((a, b) =>
       (b.free_days - a.free_days) || (a.num - b.num))
 
     console.time("rendering")
-    let html = `<h2>EDTs (triés par nombre de jours libres)</h2>` + v_timetables.map(renderTimetable).join("")
+    let html = `<h2>EDTs (triés par nombre de jours libres)</h2>` + prevoirValidPossibilities.map(renderTimetable).join("")
     console.timeEnd("rendering")
     console.time("innerHTML")
-    erender.innerHTML = html
     console.timeEnd("innerHTML")
 
-    err.innerHTML = `${poss_count}/${all_timetables.length} possibilités, ${v_timetables.length} valides`
+    err.innerHTML = `${prevoirValidPossibilities.length} valides / ${prevoirPossibilities.length} possibilités`
+    $('#prevoirButton').prop('disabled', false);
   }
   catch (error) {
     console.error(error)
-    err.innerHTML = error
+    err.innerHTML = 'Erreur: non valide';
+    estats.innerHTML = '';
+    $('#prevoirButton').prop('disabled', true);
   }
   console.timeEnd("on input")
+}
+
+if (text.value.length > 0) {
+  text.oninput();
 }
 
 function parseCourses(text) {

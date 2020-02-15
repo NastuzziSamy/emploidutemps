@@ -73,7 +73,71 @@ var promptPrevoir = function () {
   focus();
 };
 
+var generatePrevoir = function() {
+  loading();
+  window.get.mode = 'prevoir';
+
+  $.ajax({
+    url: '/emploidutemps/ressources/php/prevoir.php',
+    type: 'POST',
+    data: {
+      'text': $('#prevoirText').val(),
+    },
+    complete: function () {
+      endLoading();
+      closePopup();
+
+      generatePrevoirPossibility();
+    }
+  });
+};
+
+var generateSubMenuPrevoir = function () {
+  $('#prevoirStatText').html(prevoirValidPossibilities.length + ' prédiction' + (prevoirValidPossibilities.length ? 's:' : ':'));
+  $('#affichage_prevoir').css('display', 'block');
+  $('#prevoirPossibilities').empty();
+
+  $.each(prevoirValidPossibilities, function (index, possibility) {
+    $('<div></div>').attr('id', 'printed-' + index).append($('<button></button>').html('<span>Cal n°' + possibility.num + ' - ' + possibility.free_days + ' jours libres</span>').css('color', prevoirIndex === index ? '#228822' : '').on('click', function () {
+      prevoirIndex = index;
+
+      generatePrevoirPossibility();
+    })).appendTo($('#prevoirPossibilities'));
+  });
+};
+
+var generatePrevoirPossibility = function () {
+  generateTitle("Possibilité n°" + prevoirValidPossibilities[prevoirIndex].num + " - " + prevoirValidPossibilities[prevoirIndex].free_days + " jours libres");
+  
+  generateSubMenuPrevoir();
+
+  generateCalendar([{
+    data: prevoirValidPossibilities[prevoirIndex].map(parsePrevoirPossibility),
+    type: 'prevoir',
+  }], 1);
+};
+
+var parsePrevoirPossibility = function (course) {
+  return {
+    day: course.day,
+    duration: course.he - course.hs,
+    frequency: 1,
+    groupe: '',
+    startTime: course.hs,
+    subject: course.uv,
+    timeText: course.h_start + "-" + course.h_end,
+    location: course.uv,
+    type: course.type === 'Cours' ? 'C' : (course.type === 'TD' ? 'D' : 'T'),
+  };
+};
+
 var generate = function (silentMode, callback) {
+  if (window.get.mode === 'prevoir') {
+    return;
+  }
+  
+  $('#affichage_prevoir').css('display', 'none');
+
   console.time('generate');
 
   getRequest('calendar.php', window.get, function (data) {
@@ -179,6 +243,11 @@ var popup = function (popupHead, content, bgColor, fgColor) {
 var closePopup = function () {
   $('#popup').css('visibility', 'hidden');
   $('#popup').css('opacity', '0');
+
+  if ($('#prevoir').css('visibility') === 'visible') {
+    $('#mode_' + window.get.mode).click();
+  }
+
   $('#prevoir').css('visibility', 'hidden');
   $('#prevoir').css('opacity', '0');
 
@@ -2148,7 +2217,7 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
         style.width = task.width;
         style.left = task.left;
 
-        isUV = group.type == 'uv_followed' || group.type == 'uv' || group.type == 'received' || group.type == 'sent' || group.type == 'canceled';
+        isUV = group.type == 'uv_followed' || group.type == 'uv' || group.type == 'received' || group.type == 'sent' || group.type == 'canceled' || group.type === 'prevoir';
         isEvent = group.type == 'event' || group.type == 'meeting';
         subject = div.clone().addClass('subject');
 
@@ -2365,6 +2434,7 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
 }
 
 var generateCalendar = function (tasks, sides, uvs, daysInfo) {
+  console.log(tasks, sides, uvs, daysInfo);
   console.time('calendar');
   var div = $('<div></div>');
   var schedule = div.clone().addClass('calendar-container');
