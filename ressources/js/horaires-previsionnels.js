@@ -39,9 +39,9 @@ const DAYS = {
   Samedi: 5
 }
 const WIDTH = 120
-var prevoirPossibilities = [];
-var prevoirValidPossibilities = [];
-var prevoirIndex = 0;
+let prevoirPossibilities = []
+let prevoirValidPossibilities = []
+let prevoirIndex = 0
 
 text.oninput = () => {
   console.time("on input")
@@ -49,7 +49,7 @@ text.oninput = () => {
     err.innerHTML = "calcul en cours..."
 
     console.time("parseCourses")
-    let all_courses = parseCourses(text.value)
+    const all_courses = parseCourses(text.value)
     console.timeEnd("parseCourses")
 
     if (all_courses.length == 0) {
@@ -57,8 +57,7 @@ text.oninput = () => {
       return
     }
     else {
-      const text = document.getElementById('prevoirText')
-      text.scrollIntoView()
+      document.getElementById('prevoirText').scrollIntoView()
     }
 
     // const poss_count = Object.values(all_courses).map(c => c.length).reduce((x, y) => x * y)
@@ -76,31 +75,31 @@ text.oninput = () => {
       (b.free_days - a.free_days) || (a.num - b.num))
 
     err.innerHTML = `${prevoirValidPossibilities.length} valides / ${prevoirPossibilities.length} possibilités`
-    $('#prevoirButton').prop('disabled', false);
+    $('#prevoirButton').prop('disabled', false)
   }
   catch (error) {
     console.error(error)
-    err.innerHTML = 'Erreur: non valide';
-    estats.innerHTML = '';
-    $('#prevoirButton').prop('disabled', true);
+    err.innerHTML = 'Erreur: non valide'
+    estats.innerHTML = ''
+    $('#prevoirButton').prop('disabled', true)
   }
   console.timeEnd("on input")
 }
 
 function parseCourses(text) {
-  let courses = {}
+  const courses = {}
   while (m = re.exec(text)) {
     m = m.filter(function (val) {
-      return val !== undefined;
-    });
+      return val !== undefined
+    })
     const [, uv, type, day, h_start, h_end, room, period] = m
     console.log(m)
     let [hs, ms] = h_start.split(":"); hs = +hs + +ms / 60
     let [he, me] = h_end.split(":"); he = +he + +me / 60
-    let pnhebdo = /\d+ jours/.test(period) //|| !/Semaine/.test(period)
-    let shift = period == "B"
-    let p15 = /15 jours/.test(period)
-    let obj = { uv, type, day: DAYS[day], hs, he, room, period, pnhebdo, shift, p15, h_start, h_end }
+    const pnhebdo = /\d+ jours/.test(period) //|| !/Semaine/.test(period)
+    const shift = period == "B"
+    const p15 = /15 jours/.test(period)
+    const obj = { uv, type, day: DAYS[day], hs, he, room, period, pnhebdo, shift, p15, h_start, h_end }
     if (courses[uv + type] === undefined)
       courses[uv + type] = []
     courses[uv + type].push(obj)
@@ -108,8 +107,8 @@ function parseCourses(text) {
 
   while (m = re_test.exec(text)) {
     m = m.filter(function (val) {
-      return val !== undefined;
-    });
+      return val !== undefined
+    })
     let [, uv, type, room, day, h_start, h_end, period] = m
     if (uv == 'TX00' || uv == 'PR00')
       continue
@@ -118,10 +117,10 @@ function parseCourses(text) {
     // c'est plus du tout une room, de toute façon osef tu vois pas la diff
     let [hs, ms] = h_start.split(":"); hs = +hs + +ms / 60
     let [he, me] = h_end.split(":"); he = +he + +me / 60
-    let pnhebdo = /\d+ jours/.test(period) || !/Semaine/.test(period)
-    let shift = period == "B"
-    let p15 = /15 jours/.test(period)
-    let obj = { uv, type, day: DAYS[day], hs, he, room, period, pnhebdo, shift, p15, h_start, h_end }
+    const pnhebdo = /\d+ jours/.test(period) || !/Semaine/.test(period)
+    const shift = period == "B"
+    const p15 = /15 jours/.test(period)
+    const obj = { uv, type, day: DAYS[day], hs, he, room, period, pnhebdo, shift, p15, h_start, h_end }
     if (courses[uv + type] === undefined)
       courses[uv + type] = []
     courses[uv + type].push(obj)
@@ -131,9 +130,9 @@ function parseCourses(text) {
 }
 
 function possibilities(courses, acc = [[]]) {
-  let keys = Object.keys(courses)
+  const keys = Object.keys(courses)
   if (keys.length) {
-    let first = courses[keys[0]]
+    const first = courses[keys[0]]
     acc = [].concat(...first.map(poss => acc.map(a => a.concat(poss))))
     delete courses[keys[0]]
     return possibilities(courses, acc)
@@ -144,9 +143,9 @@ function possibilities(courses, acc = [[]]) {
 
 function isValid(timetable) {
   for (let i = 1; i < timetable.length; ++i) {
-    let ti = timetable[i]
+    const ti = timetable[i]
     for (let j = 0; j < i; ++j) {
-      let tj = timetable[j]
+      const tj = timetable[j]
       if (ti.day == tj.day && !(tj.he <= ti.hs || tj.hs >= ti.he)) {
         if (ti.pnhebdo && tj.pnhebdo)
           ti.shift = true
@@ -164,7 +163,7 @@ function stats(timetables) {
   const p = x => `${(x / N * 100).toPrecision(3)}% (${x}/${N})`
 
   timetables.forEach((timetable, i) => {
-    let s = new Set(timetable.map(c => c.day))
+    const s = new Set(timetable.map(c => c.day))
     timetable.num = i
     timetable.free_days = 6 - s.size
     free_days[6 - s.size]++
