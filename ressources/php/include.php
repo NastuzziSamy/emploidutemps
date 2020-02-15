@@ -19,6 +19,10 @@
   }
   register_shutdown_function('shutdown');
 
+  if (!isset($_SESSION['week'])) {
+    $_SESSION['week'] = date('Y-m-d', strtotime('monday this week'));
+  }
+
   function getStudentInfos($login = NULL) {
     $query = $GLOBALS['db']->request(
       'SELECT * FROM students WHERE (? IS NULL OR login = ?)',
@@ -60,7 +64,7 @@
       if (isset($_GET['week']) && is_string($_GET['week']) && isAGoodDate($_GET['week']))
         $_SESSION['week'] = $_GET['week'];
       else
-        setDate('monday this week');
+        $_SESSION['week'] = date('Y-m-d', strtotime('monday this week', strtotime($week)));
 
       $query = $GLOBALS['db']->request(
         'SELECT * FROM students WHERE login = ?',

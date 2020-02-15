@@ -1,6 +1,6 @@
 <?php
   function linkToExchange($array) {
-    $url = 'https://'.$_SERVER['HTTP_HOST'].'/emploidutemps/?mode=modifier';
+    $url = '/emploidutemps/?mode=modifier';
 
     foreach ($array as $key => $value)
       $url .= '&'.$key.'='.$value;

@@ -1,0 +1,80 @@
+#future * {
+  box-sizing: border-box;
+}
+
+#header {
+  position: relative;
+}
+
+#future {
+  padding: 10px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.center {
+  text-align: center;
+}
+
+#future h1, #future h2 {
+  text-align: center;
+  font-weight: lighter;
+}
+
+button#horaires-p {
+  background-color: #5cb85c;
+  padding: 3px 6px;
+  /* font-size: 14px; */
+  /* font-weight: 400; */
+  /* cursor: pointer; */
+  border: 1px solid #4cae4c;
+  border-radius: 4px;
+}
+
+/* #future {
+	box-sizing: border-box;
+} */
+#future h3 {
+	font-size: 1em;
+	opacity: 0.4;
+	font-weight: 600;
+  margin-bottom: 0;
+  text-align: center;
+}
+#future p { margin-top: 0; }
+#future a {
+	color: red;
+}
+#future textarea {
+	width: 100%;
+	font-size: 0.8em;
+}
+#future .disabled {
+	opacity: 0.2;
+}
+
+#future .calendar {
+	width: 100%;
+	position: relative;
+	font-size: 0.8em;
+	height: 280px;
+	border: 1px solid black;
+	border-radius: 4px;
+	overflow: hidden;
+	white-space: nowrap;
+  line-height: initial;
+  background: white;
+  color: black;
+}
+#future .calendar div {
+	background: lightgrey;
+	position: absolute;
+	width: calc(100%/6 - 4px);
+	border: 1px solid black;
+	border-radius: 4px;
+	padding: 2px;
+	overflow: hidden;
+}
+#future .calendar div.nothebdo {
+	width: calc(50%/6 - 4px);
+}

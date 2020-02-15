@@ -1,7 +1,7 @@
 var HOUR_MIN = 7;
 var HOUR_MAX = 21;
 var RELOAD_SEC = 120;
-var headers = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi",  "Samedi", "Dimanche"];
+var headers = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 var date = new Date();
 var sessionLogin = '';
 var get = {};
@@ -23,14 +23,14 @@ var getRequest = function (url, get, callback, silentMode) {
   for (var key in get) {
     if (typeof get[key] == 'object') {
       for (var key2 in get[key])
-      request += '&' + encodeURIComponent(key) + '[]=' + encodeURIComponent(get[key][key2]);
+        request += '&' + encodeURIComponent(key) + '[]=' + encodeURIComponent(get[key][key2]);
     }
     else
       request += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(get[key]);
   }
 
-  console.log('https://' + window.location.hostname + '/emploidutemps/ressources/php/' + url + ($.isEmptyObject(get) ? '' : '?') + request.substr(1));
-  $.getJSON('https://' + window.location.hostname + '/emploidutemps/ressources/php/' + url + ($.isEmptyObject(get) ? '' : '?') + request.substr(1), function(data) {
+  console.log('/emploidutemps/ressources/php/' + url + ($.isEmptyObject(get) ? '' : '?') + request.substr(1));
+  $.getJSON('/emploidutemps/ressources/php/' + url + ($.isEmptyObject(get) ? '' : '?') + request.substr(1), function (data) {
     if (data.error)
       $.miniNoty('<i class="fa fa-exclamation-circle" aria-hidden="true"></i> ' + data.error, 'error');
     else if (data.fatal)
@@ -63,6 +63,14 @@ var addGet = function (get) {
 var changeMode = function (mode) {
   window.get.mode = mode;
   generate();
+};
+
+var promptPrevoir = function () {
+  $('#prevoir').css('visibility', 'visible');
+  $('#prevoir').css('opacity', '1');
+  $('#zonePopup').addClass('focused');
+
+  focus();
 };
 
 var generate = function (silentMode, callback) {
@@ -120,7 +128,7 @@ var generate = function (silentMode, callback) {
 };
 
 var loading = function () {
-  $('<img>').attr('id', 'loading').attr('src', 'https://' + window.location.hostname + '/emploidutemps' + '/ressources/img/loading.gif').appendTo($('#calendar-container'));
+  $('<img>').attr('id', 'loading').attr('src', '/emploidutemps/ressources/img/loading.gif').appendTo($('#calendar-container'));
 };
 
 var endLoading = function () {
@@ -128,7 +136,7 @@ var endLoading = function () {
 };
 
 var submited = function () {
-  setTimeout(function() {
+  setTimeout(function () {
     if ($('.focusedInput').length != 0)
       $('.focusedInput').first().focus();
 
@@ -171,6 +179,8 @@ var popup = function (popupHead, content, bgColor, fgColor) {
 var closePopup = function () {
   $('#popup').css('visibility', 'hidden');
   $('#popup').css('opacity', '0');
+  $('#prevoir').css('visibility', 'hidden');
+  $('#prevoir').css('opacity', '0');
 
   $('#zonePopup').removeClass('focused');
   $('#zonePopup').removeClass('focused');
@@ -194,16 +204,16 @@ var disconnect = function () {
       'scrolling': 'no',
       'height': '100%',
       'width': '100%',
-      'src': 'https://' + window.location.hostname + '/emploidutemps/disconnect.php'
+      'src': '/emploidutemps/disconnect.php'
     }).css('position', 'absolute'))
     .append($('<div></div>', {
       'border': '100%',
       'width': '100%',
       'class': 'optionCards'
     }).css('position', 'absolute').css('bottom', 0)
-      .append($('<button></button>').html('<i class="fa fa-external-link" aria-hidden="true"></i> Portail des assos').on('click', function() { window.location = 'https://assos.utc.fr/'; }))
-      .append($('<button></button>').html('<i class="fa fa-undo" aria-hidden="true"></i> Se reconnecter').on('click', function() { window.location.reload(); }))
-      .append($('<button></button>').html('<i class="fa fa-external-link" aria-hidden="true"></i> ENT').on('click', function() { window.location = 'https://ent.utc.fr/'; }))
+      .append($('<button></button>').html('<i class="fa fa-external-link" aria-hidden="true"></i> Portail des assos').on('click', function () { window.location = 'https://assos.utc.fr/'; }))
+      .append($('<button></button>').html('<i class="fa fa-undo" aria-hidden="true"></i> Se reconnecter').on('click', function () { window.location.reload(); }))
+      .append($('<button></button>').html('<i class="fa fa-external-link" aria-hidden="true"></i> ENT').on('click', function () { window.location = 'https://ent.utc.fr/'; }))
     )
   );
 
@@ -253,7 +263,7 @@ var seeGroup = function (group, edit) {
   getRequest('groups.php', {
     'mode': 'get',
     'group': group
-   }, function (data) {
+  }, function (data) {
     console.log(data);
     var corps = $('<div></div>');
     var groupElements = {};
@@ -281,7 +291,7 @@ var seeGroup = function (group, edit) {
           .append($('<b></b>').text(sub_group.name))
           .append($('<button></button>').html('<i class="fa fa-' + (edit ? 'edit' : 'eye') + '"></i>').prop('disabled', (!edit || (edit && sub_group.type != 'custom'))).on('click', edit ? function () {
             setSubGroup(group, name, 'sub-' + name);
-          } : function () {})).appendTo(corps);
+          } : function () { })).appendTo(corps);
 
         if (edit)
           return div.addClass('optionCards').append($('<button></button>').html('<i class="fa fa-remove" aria-hidden="true"></i> Supprimer ce sous-groupe vide').prop('disabled', sub_group.type != 'custom').attr('onClick', 'delSubGroup("' + group + '", "' + name + '")')).appendTo(corps);
@@ -463,8 +473,8 @@ var setSubGroup = function (idGroup, idSubGroup, id) {
 var addToGroup = function (element, text) {
   getRequest('groups.php', {
     'mode': 'get',
-   }, function (data) {
-     console.log(Object.keys(data.groups).length)
+  }, function (data) {
+    console.log(Object.keys(data.groups).length)
     if (Object.keys(data.groups).length == 1) {
       addGroup();
       $.miniNoty('<i class="fa fa-info-circle" aria-hidden="true"></i> Il faut créer un groupe avant de pouvoir ajouter ' + text, 'normal');
@@ -476,16 +486,16 @@ var addToGroup = function (element, text) {
     var corps = $('<div></div>').addClass('centerCard').text('Groupe: ');
 
     var groups = $('<select></select>').attr('id', 'selectedGroup').on('change', function () {
-      $($( this ).data('selected')).css('display', 'none');
+      $($(this).data('selected')).css('display', 'none');
       $('#sub_' + this.value).css('display', 'inline');
-      $( this ).data('selected', '#sub_' + this.value);
+      $(this).data('selected', '#sub_' + this.value);
 
       if ($('#sub_' + this.value).prop('disabled')) {
         $('#sub0').attr('disabled', true);
         $('#sub1').click();
 
         if ($('#sub_' + this.value + ' option').length > 1)
-        $.miniNoty('<i class="fa fa-info-circle" aria-hidden="true"></i> Il n\'est pas possible d\'ajouter ' + text + ' dans un sous-groupe généré automatiquement pour la gestion des groupes associations', 'normal');
+          $.miniNoty('<i class="fa fa-info-circle" aria-hidden="true"></i> Il n\'est pas possible d\'ajouter ' + text + ' dans un sous-groupe généré automatiquement pour la gestion des groupes associations', 'normal');
       }
       else
         $('#sub0').attr('disabled', false).click();
@@ -556,7 +566,7 @@ var addToGroup = function (element, text) {
         $('#sub1').click();
         $
       }
-      }
+    }
   });
 };
 
@@ -691,7 +701,7 @@ var uvMoodle = function (uv) {
   window.open('http://moodle.utc.fr/course/search.php?search=' + uv);
 };
 
-var changeColor = function(id, color, name) {
+var changeColor = function (id, color, name) {
   var get = {
     'color': color.substr(1)
   };
@@ -728,7 +738,7 @@ var startSearch = function () {
       .append($('<div></div>').addClass('cardButtons')));
 
   $("#addTabText").keyup(function (event) {
-    if(event.keyCode == 13){
+    if (event.keyCode == 13) {
       if (!$('#searchButton').prop('disabled'))
         printSearch();
     }
@@ -766,7 +776,7 @@ var printSearch = function (begin) {
     'search': $('#addTabText').val().replace(/^\s+|\s+$/g, '').replace(/_/g, '').replace(/\s/, '%\\_%\\'),
     'begin': begin,
     'nbr': 50
-  }, function(data) {
+  }, function (data) {
     $('.studentCards').empty();
     $('.studentCardsText').text(data.students.length + ' étudiant' + (data.students.length > 1 ? 's' : '') + ' affiché' + (data.students.length > 1 ? 's' : ''));
     data.students.forEach(function (student) {
@@ -801,7 +811,7 @@ var exportDownload = function (type) {
         .append($('<input></input>').attr('type', 'radio').attr('name', 'alarm').attr('id', 'withoutAlarm').on('click', function () { $('#alarm').val(0).prop('disabled', true); }))
         .append($('<label></label><br /><br />').attr('for', 'withoutAlarm').text('N\'activer aucun rappel'))
         .append('Du ')
-        .append($('<input />').attr('type', 'date').val(new Date().toJSON().slice(0,10)).attr('id', 'begin'))
+        .append($('<input />').attr('type', 'date').val(new Date().toJSON().slice(0, 10)).attr('id', 'begin'))
         .append(' Au ')
         .append($('<input /><br /><br />').attr('type', 'date').attr('placeholder', 'dernier évènement').attr('id', 'end'))
         .append($('<button></button>').text('Générer et télécharger mon emploi du temps').on('click', function () {
@@ -855,19 +865,19 @@ var exportDownload = function (type) {
       .append($('<button></button>').on('click', function () { exportDownload('pdf'); }).text('Obtenir son calendrier sous format PDF (.pdf)'))
       .append($('<button></button>').on('click', function () { exportDownload('img'); }).text('Obtenir son calendrier sous format image (.png/.jpg)'))
       .append($('<button></button>').on('click', function () { window.location.href = 'http://wwwetu.utc.fr/sme/EDT/' + window.sessionLogin + '.edt'; }).text('Obtenir son calendrier sous format SME (mail reçu)'))
-      .append($('<button></button>').on('click', function () { window.location.href = 'https://' + window.location.hostname + '/emploidutemps' + '/ressources/pdf/alternances.pdf' }).text('Télécharger le calendrier des alternances'))
-      .append($('<button></button>').on('click', function () { window.location.href = 'https://' + window.location.hostname + '/emploidutemps' + '/ressources/pdf/infosRentree.pdf' }).text('Télécharger l\'info rentrée'))
+      .append($('<button></button>').on('click', function () { window.location.href = '/emploidutemps/ressources/pdf/alternances.pdf' }).text('Télécharger le calendrier des alternances'))
+      .append($('<button></button>').on('click', function () { window.location.href = '/emploidutemps/ressources/pdf/infosRentree.pdf' }).text('Télécharger l\'info rentrée'))
     );
 
-/*  <div onClick="parameters()" style="cursor: pointer" id="popupHead">Exporter/Télécharger</div>
-    <div class="parameters" style="text-align: center;">
-      <button onClick="parameters(\'ical\');">Obtenir son calendrier sous format iCal (.ics)</button>
-      <button onClick="parameters(\'pdf\');">Obtenir son calendrier sous format PDF (.pdf)</button>
-      <button onClick="parameters(\'img\');">Obtenir son calendrier sous format image (.png/jpg)</button>
-      <button onClick="window.location.href = \'http://wwwetu.utc.fr/sme/EDT/', $_SESSION['login'], '.edt\';"></button>
-      <button onClick="window.location.href = \'https://\' + window.location.hostname + \'/emploidutemps\' + \'/ressources/pdf/alternances.pdf\';"></button>
-      <button onClick="window.location.href = \'https://\' + window.location.hostname + \'/emploidutemps\' + \'/ressources/pdf/infosRentree.pdf\';"></button>
-    </div>*/
+  /*  <div onClick="parameters()" style="cursor: pointer" id="popupHead">Exporter/Télécharger</div>
+      <div class="parameters" style="text-align: center;">
+        <button onClick="parameters(\'ical\');">Obtenir son calendrier sous format iCal (.ics)</button>
+        <button onClick="parameters(\'pdf\');">Obtenir son calendrier sous format PDF (.pdf)</button>
+        <button onClick="parameters(\'img\');">Obtenir son calendrier sous format image (.png/jpg)</button>
+        <button onClick="window.location.href = \'http://wwwetu.utc.fr/sme/EDT/', $_SESSION['login'], '.edt\';"></button>
+        <button onClick="window.location.href = \'/emploidutemps/ressources/pdf/alternances.pdf\';"></button>
+        <button onClick="window.location.href = \'/emploidutemps/ressources/pdf/infosRentree.pdf\';"></button>
+      </div>*/
 };
 
 var getImg = function () {
@@ -903,36 +913,38 @@ var getImg = function () {
   var calendar = $('#calendar-container');
   calendar.css('width', (1028 - (hidden * 138)) + 'px').addClass('calendar-exported');
 
-  html2canvas(calendar[0], { onrendered: function(canvas) {
-    if (type == 'jpeg') {
-      var ctx = canvas.getContext('2d')
-      var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      var data = imgData.data;
+  html2canvas(calendar[0], {
+    onrendered: function (canvas) {
+      if (type == 'jpeg') {
+        var ctx = canvas.getContext('2d')
+        var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imgData.data;
 
-      for(var i = 0; i < data.length; i += 4){
-        if(data[i+3] < 255){
-          data[i] = 255;
-          data[i+1] = 255;
-          data[i+2] = 255;
-          data[i+3] = 255;
+        for (var i = 0; i < data.length; i += 4) {
+          if (data[i + 3] < 255) {
+            data[i] = 255;
+            data[i + 1] = 255;
+            data[i + 2] = 255;
+            data[i + 3] = 255;
+          }
         }
+
+        ctx.putImageData(imgData, 0, 0);
       }
 
-      ctx.putImageData(imgData,0,0);
+      for (var i = 0; i < length; i++) {
+        $(headers[i]).css('display', displays[i]);
+        $(days[i * window.sides]).css('display', displays[i]);
+
+        if (window.sides == 2)
+          $(days[(i * window.sides) + 1]).css('display', displays[i]);
+      }
+
+      calendar.removeClass('calendar-exported');
+      $('#generatedImg').html('<img src="' + canvas.toDataURL('image/' + type || 'png', 1.0) + '">');
+      setCalendar(window.focusedDay);
     }
-
-    for (var i = 0; i < length; i++) {
-      $(headers[i]).css('display', displays[i]);
-      $(days[i * window.sides]).css('display', displays[i]);
-
-      if (window.sides == 2)
-        $(days[(i * window.sides) + 1]).css('display', displays[i]);
-    }
-
-    calendar.removeClass('calendar-exported');
-    $('#generatedImg').html('<img src="' + canvas.toDataURL('image/' + type || 'png', 1.0) + '">');
-    setCalendar(window.focusedDay);
-  }});
+  });
 };
 
 var getPDF = function () {
@@ -968,21 +980,23 @@ var getPDF = function () {
   var calendar = $('#calendar-container');
   calendar.css('width', 1032 + 'px').addClass('calendar-exported');
 
-  html2canvas(calendar[0], { onrendered: function(canvas) {
-    doc.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 12 + (hidden * 18), 26);
+  html2canvas(calendar[0], {
+    onrendered: function (canvas) {
+      doc.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 12 + (hidden * 18), 26);
 
-    for (var i = 0; i < length; i++) {
-      $(headers[i]).css('display', displays[i]);
-      $(days[i * window.sides]).css('display', displays[i]);
+      for (var i = 0; i < length; i++) {
+        $(headers[i]).css('display', displays[i]);
+        $(days[i * window.sides]).css('display', displays[i]);
 
-      if (window.sides == 2)
-        $(days[(i * window.sides) + 1]).css('display', displays[i]);
+        if (window.sides == 2)
+          $(days[(i * window.sides) + 1]).css('display', displays[i]);
+      }
+
+      calendar.removeClass('calendar-exported');
+      setCalendar(window.focusedDay);
+      doc.save($('#pdfName').val() + '.pdf');
     }
-
-    calendar.removeClass('calendar-exported');
-    setCalendar(window.focusedDay);
-    doc.save($('#pdfName').val() + '.pdf');
-  }});
+  });
 };
 
 
@@ -1137,7 +1151,7 @@ var createEvenement = function (day, begin, end, subject, description, location,
     }).insertBefore($('#sendButton'));
   }
 
-  $( "#date" ).datepicker( $.datepicker.regional[ "fr" ] );
+  $("#date").datepicker($.datepicker.regional["fr"]);
   $('#begin').timepicker();
   $('#end').timepicker();
 };
@@ -1147,7 +1161,7 @@ var deleteEvenement = function (idEvent) {
     'mode': 'del',
     'idEvent': idEvent
   }, function () {
-      generate();
+    generate();
   });
 };
 
@@ -1191,7 +1205,7 @@ var askExchange = function (idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     if (data.sent.length == 0)
       corps.append($('<div></div>').append('Tu es le/la premier/ère à faire cette demande. Un mail sera envoyé à ceux qui possèdent le créneau pour leur signaler que tu viens de réaliser cette proposition.<br />'));
@@ -1199,29 +1213,29 @@ var askExchange = function (idUV, idUV2) {
       corps.append($('<div></div>').append(data.sent.length + (data.sent.length == 1 ? ' personne a déjà fait ' : ' personnes ont déjà fait ') + ' cette proposition. Tu devras attendre ton tour.<br />'));
 
     corps
-    .append($('<div></div>').html('Après avoir effectué cette proposition, tu peux bien sûr l\'annuler avant celle-ci soit acceptée. Tu peux toujours aussi proposer d\'autres créneaux bien sûr.<br /><br />Tu dois maintenant écrire rapidement pourquoi tu souhaites effectuer cet échange:'))
-    .append($('<textarea /><br /><br />').attr('id', 'note').addClass('focusedInput').addClass('submitedInput').css('width', '50%').attr('maxlength', 180).attr('placeholder', 'Je souhaite échanger mon créneau contre le tien').val('Je souhaite échanger mon créneau contre le tien'))
-    .append($('<button></button>').addClass('submitedButton').text('Proposer cet échange').on('click', function () {
-      var note = $('#note').val();
+      .append($('<div></div>').html('Après avoir effectué cette proposition, tu peux bien sûr l\'annuler avant celle-ci soit acceptée. Tu peux toujours aussi proposer d\'autres créneaux bien sûr.<br /><br />Tu dois maintenant écrire rapidement pourquoi tu souhaites effectuer cet échange:'))
+      .append($('<textarea /><br /><br />').attr('id', 'note').addClass('focusedInput').addClass('submitedInput').css('width', '50%').attr('maxlength', 180).attr('placeholder', 'Je souhaite échanger mon créneau contre le tien').val('Je souhaite échanger mon créneau contre le tien'))
+      .append($('<button></button>').addClass('submitedButton').text('Proposer cet échange').on('click', function () {
+        var note = $('#note').val();
 
-      if (note == '')
-        note = $('#note').attr('placeholder');
+        if (note == '')
+          note = $('#note').attr('placeholder');
 
-      getRequest('exchanges.php', {
-        'mode': 'ask',
-        'idUV': idUV,
-        'idUV2': idUV2,
-        'note': note
-      }, function () {
-        window.get = {
-          'mode': 'modifier',
-          'mode_type': 'sent',
-          'mode_option': 'available'
-        };
+        getRequest('exchanges.php', {
+          'mode': 'ask',
+          'idUV': idUV,
+          'idUV2': idUV2,
+          'note': note
+        }, function () {
+          window.get = {
+            'mode': 'modifier',
+            'mode_type': 'sent',
+            'mode_option': 'available'
+          };
 
-        generate();
-      });
-    }));
+          generate();
+        });
+      }));
 
     popup('Echanger ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1235,7 +1249,7 @@ var cancelAskExchange = function (idExchange, idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     if (data.sent.length == 1)
       corps.append($('<div></div>').append('Tu étais le/la seul.e à avoir fait cette proposition. Un mail sera envoyé à ceux qui possèdent le créneau pour leur signaler que la proposition n\'est plus disponible.<br />'));
@@ -1243,22 +1257,22 @@ var cancelAskExchange = function (idExchange, idUV, idUV2) {
       corps.append($('<div></div>').append(data.sent.length - 1 + (data.sent.length == 2 ? ' autre personne souhaite effectuer cet échange. Il ne sera plus que le/la seul.e.' : ' autres personnes ont aussi fait cette proposition.<br />')));
 
     corps
-    .append($('<div></div>').html('Après avoir annulé cette proposition, tu pourras de nouveau refaire cette demande. Si entre-temps, d\'autres personnes ont fait la demande, tu devras attendre ton tour. Tu peux toujours aussi proposer d\'autres créneaux bien sûr.<br /><br />'))
-    .append($('<button></button>').addClass('submitedButton').text('Annuler cette proposition').on('click', function () {
-      getRequest('exchanges.php', {
-        'mode': 'cancelAsk',
-        'idExchange': idExchange,
-      }, function () {
-        window.get = {
-          'mode': 'modifier',
-          'mode_type': 'uv_followed',
-          'uv': task.uv,
-          'type': task.type
-        };
+      .append($('<div></div>').html('Après avoir annulé cette proposition, tu pourras de nouveau refaire cette demande. Si entre-temps, d\'autres personnes ont fait la demande, tu devras attendre ton tour. Tu peux toujours aussi proposer d\'autres créneaux bien sûr.<br /><br />'))
+      .append($('<button></button>').addClass('submitedButton').text('Annuler cette proposition').on('click', function () {
+        getRequest('exchanges.php', {
+          'mode': 'cancelAsk',
+          'idExchange': idExchange,
+        }, function () {
+          window.get = {
+            'mode': 'modifier',
+            'mode_type': 'uv_followed',
+            'uv': task.uv,
+            'type': task.type
+          };
 
-        generate();
-      });
-    }));
+          generate();
+        });
+      }));
 
     popup('Annuler la proposition d\'échange de ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1272,24 +1286,24 @@ var refuseExchange = function (idExchange, idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     corps
-    .append($('<div></div>').html('Après avoir refusé cette proposition, tu ne pourras plus accepter cet échange, même si quelqu\'un d\'autre se propose. Tu peux toujours aussi proposer d\'autres créneaux ou toi-même demander cet échange si tu souhaites enfin de compte échanger ton créneau.<br /><br />'))
-    .append($('<button></button>').addClass('submitedButton').text('Refuser cette proposition').on('click', function () {
-      getRequest('exchanges.php', {
-        'mode': 'refuse',
-        'idExchange': idExchange,
-      }, function () {
-        window.get = {
-          'mode': 'modifier',
-          'mode_type': 'received',
-          'mode_option': 'refused'
-        };
+      .append($('<div></div>').html('Après avoir refusé cette proposition, tu ne pourras plus accepter cet échange, même si quelqu\'un d\'autre se propose. Tu peux toujours aussi proposer d\'autres créneaux ou toi-même demander cet échange si tu souhaites enfin de compte échanger ton créneau.<br /><br />'))
+      .append($('<button></button>').addClass('submitedButton').text('Refuser cette proposition').on('click', function () {
+        getRequest('exchanges.php', {
+          'mode': 'refuse',
+          'idExchange': idExchange,
+        }, function () {
+          window.get = {
+            'mode': 'modifier',
+            'mode_type': 'received',
+            'mode_option': 'refused'
+          };
 
-        generate();
-      });
-    }));
+          generate();
+        });
+      }));
 
     popup('Refuser la proposition d\'échange de ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1303,24 +1317,24 @@ var acceptExchange = function (idExchange, idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     corps
-    .append($('<div></div>').html('Après avoir accepter cette proposition, les emplois du temps seront mis à jour et l\'échange aura été effectué. Si malheuresement, tu souhaites récupérer ton créneau, tu peux toujours réaliser une demande d\'annulation de l\'échange. Tu pourras ensuite échanger ton nouveau créneau avec un autre si tu le souhaites.<br /><br />'))
-    .append($('<button></button>').addClass('submitedButton').text('Accepter cette proposition').on('click', function () {
-      getRequest('exchanges.php', {
-        'mode': 'accept',
-        'idExchange': idExchange,
-      }, function () {
-        window.get = {
-          'mode': 'modifier',
-          'mode_type': 'received',
-          'mode_option': 'accepted'
-        };
+      .append($('<div></div>').html('Après avoir accepté cette proposition, les emplois du temps seront mis à jour et l\'échange aura été effectué. Si malheuresement, tu souhaites récupérer ton créneau, tu peux toujours réaliser une demande d\'annulation de l\'échange. Tu pourras ensuite échanger ton nouveau créneau avec un autre si tu le souhaites.<br /><br />'))
+      .append($('<button></button>').addClass('submitedButton').text('Accepter cette proposition').on('click', function () {
+        getRequest('exchanges.php', {
+          'mode': 'accept',
+          'idExchange': idExchange,
+        }, function () {
+          window.get = {
+            'mode': 'modifier',
+            'mode_type': 'received',
+            'mode_option': 'accepted'
+          };
 
-        generate();
-      });
-    }));
+          generate();
+        });
+      }));
 
     popup('Accepter la proposition d\'échange de ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1334,31 +1348,31 @@ var askCancelExchange = function (idExchange, idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     corps
-    .append($('<div></div>').html('Après avoir demandé l\'annulation de l\'échange, tu ne pourras plus proposer d\'échanger ton créneau avec celui-là. Tu peux toujours relancer la personne en espérant qu\'elle accepte l\'annulation de l\'échange.<br />Tu peux bien sûr annuler ta demande d\'annulation si l\'échange te convient en fin de compte.<br />Tu seras tenu.e informé.e si ta demande a été acceptée.<br /><br />Tu peux expliquer pourquoi tu souhaites annuler l\'échange:'))
-    .append($('<textarea /><br /><br />').attr('id', 'note').addClass('focusedInput').addClass('submitedInput').css('width', '50%').attr('maxlength', 180).attr('placeholder', 'Je souhaite annuler l\'échange que l\'on a effectué ensemble qui est celui de mon ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre le tien du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end).val('Je souhaite annuler l\'échange que l\'on a effectué ensemble qui est celui de mon ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre le tien du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end))
-    .append($('<button></button>').addClass('submitedButton').text('Demander d\'annuler cet échange').on('click', function () {
-      var note = $('#note').val();
+      .append($('<div></div>').html('Après avoir demandé l\'annulation de l\'échange, tu ne pourras plus proposer d\'échanger ton créneau avec celui-là. Tu peux toujours relancer la personne en espérant qu\'elle accepte l\'annulation de l\'échange.<br />Tu peux bien sûr annuler ta demande d\'annulation si l\'échange te convient en fin de compte.<br />Tu seras tenu.e informé.e si ta demande a été acceptée.<br /><br />Tu peux expliquer pourquoi tu souhaites annuler l\'échange:'))
+      .append($('<textarea /><br /><br />').attr('id', 'note').addClass('focusedInput').addClass('submitedInput').css('width', '50%').attr('maxlength', 180).attr('placeholder', 'Je souhaite annuler l\'échange que l\'on a effectué ensemble qui est celui de mon ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre le tien du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end).val('Je souhaite annuler l\'échange que l\'on a effectué ensemble qui est celui de mon ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre le tien du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end))
+      .append($('<button></button>').addClass('submitedButton').text('Demander d\'annuler cet échange').on('click', function () {
+        var note = $('#note').val();
 
-      if (note == '')
-        note = $('#note').attr('placeholder');
+        if (note == '')
+          note = $('#note').attr('placeholder');
 
-      getRequest('exchanges.php', {
-        'mode': 'askCancel',
-        'idExchange': idExchange,
-        'note': note
-      }, function () {
-        window.get = {
-          'mode': 'modifier',
-          'mode_type': 'canceled',
-          'mode_option': 'sent'
-        };
+        getRequest('exchanges.php', {
+          'mode': 'askCancel',
+          'idExchange': idExchange,
+          'note': note
+        }, function () {
+          window.get = {
+            'mode': 'modifier',
+            'mode_type': 'canceled',
+            'mode_option': 'sent'
+          };
 
-        generate();
-      });
-    }));
+          generate();
+        });
+      }));
 
     popup('Demander d\'annuler l\'échange de ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1372,18 +1386,18 @@ var cancelAskCancelExchange = function (idExchange, idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     corps
-    .append($('<div></div>').html('Après avoir annulé ta demande d\'annulation de l\'échange, tu ne pourras plus demander l\'annulation de cet échange. Bien sûr, si la personne avec qui tu souhaites échanger souhaite annuler l\'échange, tu peux accepter cette annulation.<br /><br />'))
-    .append($('<button></button>').addClass('submitedButton').text('Annuler ma demander d\'annulation').on('click', function () {
-      getRequest('exchanges.php', {
-        'mode': 'cancelAskCancel',
-        'idExchange': idExchange,
-      }, function () {
-        generate();
-      });
-    }));
+      .append($('<div></div>').html('Après avoir annulé ta demande d\'annulation de l\'échange, tu ne pourras plus demander l\'annulation de cet échange. Bien sûr, si la personne avec qui tu souhaites échanger souhaite annuler l\'échange, tu peux accepter cette annulation.<br /><br />'))
+      .append($('<button></button>').addClass('submitedButton').text('Annuler ma demander d\'annulation').on('click', function () {
+        getRequest('exchanges.php', {
+          'mode': 'cancelAskCancel',
+          'idExchange': idExchange,
+        }, function () {
+          generate();
+        });
+      }));
 
     popup('Annuler la demande d\'annuler l\'échange de ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1397,18 +1411,18 @@ var acceptCancelExchange = function (idExchange, idUV, idUV2) {
   }, function (data) {
     var task = data.uv;
     var toExchange = data.uv2;
-    var corps =  $('<div></div>').addClass('centerCard');
+    var corps = $('<div></div>').addClass('centerCard');
 
     corps
-    .append($('<div></div>').html('Après avoir annulé l\'échange, les emplois du temps seront restaurés comme si l\'échange n\'a jamais été effectué. Bien sûr, tu pourras rééchanger ton créneau avec d\'autres.<br /><br />'))
-    .append($('<button></button>').addClass('submitedButton').text('Annuler l\'échange').on('click', function () {
-      getRequest('exchanges.php', {
-        'mode': 'cancel',
-        'idExchange': idExchange,
-      }, function () {
-        generate();
-      });
-    }));
+      .append($('<div></div>').html('Après avoir annulé l\'échange, les emplois du temps seront restaurés comme si l\'échange n\'a jamais été effectué. Bien sûr, tu pourras rééchanger ton créneau avec d\'autres.<br /><br />'))
+      .append($('<button></button>').addClass('submitedButton').text('Annuler l\'échange').on('click', function () {
+        getRequest('exchanges.php', {
+          'mode': 'cancel',
+          'idExchange': idExchange,
+        }, function () {
+          generate();
+        });
+      }));
 
     popup('Annuler l\'échange de ton ' + (task.type == 'T' ? 'TP' : task.type == 'D' ? 'TD' : 'cours') + ' de ' + task.uv + ' du ' + window.headers[task.day].toLowerCase() + ' de ' + task.begin + ' à ' + task.end + ' contre celui du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + toExchange.begin + ' à ' + toExchange.end, corps);
   });
@@ -1497,7 +1511,7 @@ var getFreeTimes = function (timeNeeded, nbrNotAvailable, dayToSee) {
     for (var i = Object.keys(nbrAvailables).length - 1; i > 0; i--) {
       var diff = Object.keys(window.active).length - Object.keys(nbrAvailables)[i];
 
-      select.append($('<option></option>',{
+      select.append($('<option></option>', {
         'text': diff,
         'val': diff,
       }).on('click', function () {
@@ -1510,9 +1524,9 @@ var getFreeTimes = function (timeNeeded, nbrNotAvailable, dayToSee) {
     select.val(nbrNotAvailable || Object.keys(window.active).length - most);
 
     $('<div></div>')
-    .append(select)
-    .append(' indisponible(s) aux créneaux suivants:')
-    .appendTo(freeTimesDiv);
+      .append(select)
+      .append(' indisponible(s) aux créneaux suivants:')
+      .appendTo(freeTimesDiv);
 
     if (nbrNotAvailable)
       most = Object.keys(window.active).length - nbrNotAvailable;
@@ -1526,9 +1540,9 @@ var getFreeTimes = function (timeNeeded, nbrNotAvailable, dayToSee) {
         days.append($('<div></div>', {
           'text': window.headers[day] + ': ' + Object.keys(begins).length + ' créneau' + (Object.keys(begins).length > 1 ? 'x' : '') + ' disponible' + (Object.keys(begins).length > 1 ? 's' : '')
         })
-        .append($('<button></button>').html('<i class="fa fa-eye"></i>').prop('disabled', dayToSee == day).on('click', function () {
-          getFreeTimes(+timeNeeded, Object.keys(window.active).length - most, day);
-        })));
+          .append($('<button></button>').html('<i class="fa fa-eye"></i>').prop('disabled', dayToSee == day).on('click', function () {
+            getFreeTimes(+timeNeeded, Object.keys(window.active).length - most, day);
+          })));
       });
 
       days.appendTo(freeTimesDiv)
@@ -1615,9 +1629,9 @@ var generateFreeTimes = function () {
     .append($('<button></button>', {
       'class': 'submitedButton',
       'text': 'Trouver les meilleurs créneaux'
-      }).on('click', function () {
-        getFreeTimes($('#duration').val());
-      })
+    }).on('click', function () {
+      getFreeTimes($('#duration').val());
+    })
     )
     .append($('<div></div>', {
       'id': 'freeTimes',
@@ -1649,10 +1663,10 @@ var generateStudentCard = function (infos, info, idGroup, idSubGroup, type) {
 
   if (idGroup && idSubGroup && type) {
     option
-      .append($('<button></button>').html('<i class="fa fa-edit"></i>').attr('disabled',  type == 'asso').on('click', function () {
+      .append($('<button></button>').html('<i class="fa fa-edit"></i>').attr('disabled', type == 'asso').on('click', function () {
         setToGroup(idGroup, idSubGroup, infos.login, text, id, infos.semester, (infos.info === undefined || infos.info == null));
       }))
-      .append($('<button></button>').html('<i class="fa fa-remove"></i>').attr('disabled',  type == 'asso').attr('onClick', 'delFromGroup("' + idGroup + '", "' + idSubGroup + '", "' + infos.login + '", "' + infos.info + '")'));
+      .append($('<button></button>').html('<i class="fa fa-remove"></i>').attr('disabled', type == 'asso').attr('onClick', 'delFromGroup("' + idGroup + '", "' + idSubGroup + '", "' + infos.login + '", "' + infos.info + '")'));
   }
   else {
     if (window.get.mode == 'organiser')
@@ -1687,10 +1701,10 @@ var generateUVCard = function (infos, uvs, info, idGroup, idSubGroup, type) {
 
   if (idGroup && idSubGroup && type) {
     option = $('<div></div>').addClass('optionsCard')
-      .append($('<button></button>').html('<i class="fa fa-edit"></i>').attr('disabled',  type == 'asso').on('click', function () {
+      .append($('<button></button>').html('<i class="fa fa-edit"></i>').attr('disabled', type == 'asso').on('click', function () {
         setToGroup(idGroup, idSubGroup, infos.uv, infos.uv, id);
       }))
-      .append($('<button></button>').html('<i class="fa fa-remove"></i>').attr('disabled',  type == 'asso').attr('onClick', 'delFromGroup("' + idGroup + '", "' + idSubGroup + '", "' + infos.uv + '")'));
+      .append($('<button></button>').html('<i class="fa fa-remove"></i>').attr('disabled', type == 'asso').attr('onClick', 'delFromGroup("' + idGroup + '", "' + idSubGroup + '", "' + infos.uv + '")'));
   }
   else if (window.get.mode == 'organiser' && infos.info) {
     option = $('<div></div>').addClass('optionsCard')
@@ -1712,10 +1726,10 @@ var generateUVCard = function (infos, uvs, info, idGroup, idSubGroup, type) {
       .append($('<span></span>').text(uvs == undefined ? infos.info : (uvs.search(infos.uv) != -1 ? 'UV suivie' : ''))))
     .append(option);
 
-    if (infos.active && window.active[infos.uv])
-      card.css('background-color', window.active[infos.uv] + 'CC').css('color', getFgColor(window.active[infos.uv]));
+  if (infos.active && window.active[infos.uv])
+    card.css('background-color', window.active[infos.uv] + 'CC').css('color', getFgColor(window.active[infos.uv]));
 
-    return card;
+  return card;
 };
 
 var generateTitle = function (title) {
@@ -1815,13 +1829,13 @@ var generateSubMenu = function (tabs, id) {
     }
     else {
       menu.html(text + '<i class="fa fa-caret-up" aria-hidden="true"></i>').on('click', function () {
-        if ($( this ).children().last().hasClass('fa-caret-up')) {
-          $( this ).children().last().removeClass('fa-caret-up').addClass('fa-caret-down');
-          $( this ).next().css('height', 'auto');
+        if ($(this).children().last().hasClass('fa-caret-up')) {
+          $(this).children().last().removeClass('fa-caret-up').addClass('fa-caret-down');
+          $(this).next().css('height', 'auto');
         }
         else {
-          $( this ).children().last().removeClass('fa-caret-down').addClass('fa-caret-up');
-          $( this ).next().css('height', 0);
+          $(this).children().last().removeClass('fa-caret-down').addClass('fa-caret-up');
+          $(this).next().css('height', 0);
         }
       });
 
@@ -1941,7 +1955,7 @@ var generatePrinted = function (groups) {
       if (window.get.login || window.get.uv)
         $('<button></button>').html('<i class="fa fa-plus" aria-hidden="true"></i> Ajouter ' + text).on('click', function () {
           addToGroup(window.get.login || window.get.uv, text);
-        } ).appendTo($('#printedTools'));
+        }).appendTo($('#printedTools'));
 
       if (window.get.login) {
         $('<button></button>').attr('id', 'clipboard').attr('data-clipboard-text', window.get.login).html('<i class="fa fa-clipboard" aria-hidden="true"></i> Copier son login: ' + window.get.login).appendTo($('#printedTools'));
@@ -2026,15 +2040,15 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
 
   var card, style;
   //tasks.forEach(function(group) {
-  $.each(tasks, function(index, group) {
-//    group.data.forEach(function(task) {
-    $.each(group.data, function(index2, task) {
-  if (window.get.mode == 'modifier' && window.get.mode_type == 'uvs_followed') {
-    $.each(tasks[0].data, function(index0, task) {
-      if (task.subject == window.get.uv && task.type == window.get.type)
-        toExchange = task;
-    });
-  }
+  $.each(tasks, function (index, group) {
+    //    group.data.forEach(function(task) {
+    $.each(group.data, function (index2, task) {
+      if (window.get.mode == 'modifier' && window.get.mode_type == 'uvs_followed') {
+        $.each(tasks[0].data, function (index0, task) {
+          if (task.subject == window.get.uv && task.type == window.get.type)
+            toExchange = task;
+        });
+      }
 
 
 
@@ -2076,8 +2090,8 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
 
       // Il faut vérifier si des cards coincident
       nbrSameTime = 1;
-      $.each(tasks, function(indexComp, groupToCompare) {
-        $.each(groupToCompare.data, function(indexComp2, toCompare) {
+      $.each(tasks, function (indexComp, groupToCompare) {
+        $.each(groupToCompare.data, function (indexComp2, toCompare) {
           if (toCompare.day != day || task.id == toCompare.id)
             return;
 
@@ -2106,31 +2120,31 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
 
         task.width = 133 / ((sides * nbrSameTime) + (nbrSameTime == 1 && task.week != undefined) + (sides == 2 && nbrSameTime == 1 && task.week != undefined)) - ((sides * nbrSameTime == 2) || (nbrSameTime == 1 && task.week != undefined));
         task.left = (group.side == undefined ? 0 : ((group.side - 1) * 69)) - sides + (nbrPassed * task.width) + ((nbrSameTime == 1 && task.week == 'B') * 66 / sides);
-/*
-        if (card.hasClass('sameCard')) {
-          if (window.get.mode == 'comparer') {
-            if (group.side == 1) {
-              if (task.week == undefined) {
-                task.width = 133;
-                task.left = -1;
-              }
-              else {
-                task.width = 66;
-                task.left = 33;
-              }
-            }
-            else
-            return;
-          }
-          else {
-            card.addClass('sameCard' + group.side);
-            task.width += 2;
-
-            if (group.side == 2)
-              task.left -= 2;
-          }
-        }
-*/
+        /*
+                if (card.hasClass('sameCard')) {
+                  if (window.get.mode == 'comparer') {
+                    if (group.side == 1) {
+                      if (task.week == undefined) {
+                        task.width = 133;
+                        task.left = -1;
+                      }
+                      else {
+                        task.width = 66;
+                        task.left = 33;
+                      }
+                    }
+                    else
+                    return;
+                  }
+                  else {
+                    card.addClass('sameCard' + group.side);
+                    task.width += 2;
+        
+                    if (group.side == 2)
+                      task.left -= 2;
+                  }
+                }
+        */
         style.width = task.width;
         style.left = task.left;
 
@@ -2168,8 +2182,8 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
               option = button.clone().addClass('option').css('background-color', task.bgColor).css('color', getFgColor(task.bgColor));
 
               if (window.get.mode_type == 'uvs_followed') {
-                option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function() { seeUVInformations(task); }).appendTo(interraction);
-                option.clone().html('<i class="fa fa-handshake-o" aria-hidden="true"></i> Proposer en échange').on('click', function() {
+                option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function () { seeUVInformations(task); }).appendTo(interraction);
+                option.clone().html('<i class="fa fa-handshake-o" aria-hidden="true"></i> Proposer en échange').on('click', function () {
                   askExchange(toExchange.idUV, task.idUV);
                 }).appendTo(interraction);
 
@@ -2189,11 +2203,11 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
 
                     if (toExchange.login2 && toExchange.login2 == window.sessionLogin)
                       button.clone().addClass('option').css('background-color', bgColor).css('color', getFgColor(bgColor)).html('<i class="fa fa-check" aria-hidden="true"></i> Accepter l\'annulation').on('click', function () {
-                          acceptCancelExchange(toExchange.idExchange, (toExchange.idUV == task.idUV ? toExchange.idUV2 : toExchange.idUV), task.idUV);
+                        acceptCancelExchange(toExchange.idExchange, (toExchange.idUV == task.idUV ? toExchange.idUV2 : toExchange.idUV), task.idUV);
                       }).appendTo(interraction);
                     else
                       button.clone().addClass('option').css('background-color', bgColor).css('color', getFgColor(bgColor)).html('<i class="fa fa-times" aria-hidden="true"></i> Annuler ma demande').on('click', function () {
-                          cancelAskCancelExchange(toExchange.idExchange, (toExchange.idUV == task.idUV ? toExchange.idUV2 : toExchange.idUV), task.idUV);
+                        cancelAskCancelExchange(toExchange.idExchange, (toExchange.idUV == task.idUV ? toExchange.idUV2 : toExchange.idUV), task.idUV);
                       }).appendTo(interraction);
                   }
                   else if (toExchange.enabled == '1') {
@@ -2205,10 +2219,10 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
                       }).appendTo(interraction);
                     else {
                       button.clone().addClass('option').css('background-color', bgColor).css('color', getFgColor(bgColor)).html('<i class="fa fa-check" aria-hidden="true"></i> Accepter l\'échange').on('click', function () {
-                          acceptExchange(toExchange.idExchange, toExchange.idUV2, toExchange.idUV);
+                        acceptExchange(toExchange.idExchange, toExchange.idUV2, toExchange.idUV);
                       }).appendTo(interraction);
                       button.clone().addClass('option').css('background-color', bgColor).css('color', getFgColor(bgColor)).html('<i class="fa fa-times" aria-hidden="true"></i> Refuser l\'échange').on('click', function () {
-                          refuseExchange(toExchange.idExchange, toExchange.idUV2, toExchange.idUV);
+                        refuseExchange(toExchange.idExchange, toExchange.idUV2, toExchange.idUV);
                       }).appendTo(interraction);
                     }
                   }
@@ -2254,7 +2268,7 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
                 style['background-color'] = bgColor;
                 style.color = getFgColor(bgColor);
                 card.children('.note').first().append(type);
-                button.clone().addClass('option').css('background-color', bgColor).css('color', style.color).html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function() { seeUVInformations(task); }).prependTo(interraction);
+                button.clone().addClass('option').css('background-color', bgColor).css('color', style.color).html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function () { seeUVInformations(task); }).prependTo(interraction);
 
                 if (!task.description)
                   task.description = 'En ' + (toExchange.available == '1' && toExchange.exchanged == '1' ? 'récupération' : 'échange') + ' du mien du ' + window.headers[toExchange.day].toLowerCase() + ' de ' + (toExchange.timeText ? toExchange.timeText.replace('-', ' à ') : toExchange.begin + ' à ' + toExchange.end);
@@ -2281,31 +2295,31 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
             interraction.prepend($('<div></div>').addClass('description').html(task.description));
 
           if (group.type == 'uv_followed') {
-            option.clone().html("<i class='fa fa-calendar-o' aria-hidden='true'></i> Voir l'edt de l'UV").on('click', function() { seeUV(task.subject); }).appendTo(interraction);
-            option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function() { seeUVInformations(task); }).appendTo(interraction);
+            option.clone().html("<i class='fa fa-calendar-o' aria-hidden='true'></i> Voir l'edt de l'UV").on('click', function () { seeUV(task.subject); }).appendTo(interraction);
+            option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function () { seeUVInformations(task); }).appendTo(interraction);
 
             if (uvs && uvs.search(task.subject) != -1)
-              option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Echanger cet UV").on('click', function() { seeOthers(task.subject, task.type, task.idUV, 'uv-' + task.subject + '-' + task.idUV); }).appendTo(interraction);
+              option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Echanger cet UV").on('click', function () { seeOthers(task.subject, task.type, task.idUV, 'uv-' + task.subject + '-' + task.idUV); }).appendTo(interraction);
 
 
             if (window.sessionLogin == group.info) {
               colorButton = button.clone().addClass('colorButton');
               window.colors.forEach(function (color) {
                 if (color == task.bgColor)
-                  colorButton.clone().html('<i class="fa fa-times" aria-hidden="true"></i>').on('click', function() { changeColor(task.idUV, '#NULL'); }).css('background-color', color).css('color', getFgColor(color)).appendTo(interraction);
+                  colorButton.clone().html('<i class="fa fa-times" aria-hidden="true"></i>').on('click', function () { changeColor(task.idUV, '#NULL'); }).css('background-color', color).css('color', getFgColor(color)).appendTo(interraction);
                 else
-                  colorButton.clone().text('0').on('click', function() { changeColor(task.idUV, color); }).css('background-color', color).css('color', color).appendTo(interraction);
+                  colorButton.clone().text('0').on('click', function () { changeColor(task.idUV, color); }).css('background-color', color).css('color', color).appendTo(interraction);
               });
 
-              $('<i></i>').addClass('colorButton fa fa-pencil-square-o').on('click', function() { $( this ).next().click(); }).css('color', '#000000').appendTo(interraction);
-              $('<input>').addClass('colorButton').on('change', function() { changeColor(task.idUV, this.value); }).attr('type', 'color').css('display', 'none').appendTo(interraction);
+              $('<i></i>').addClass('colorButton fa fa-pencil-square-o').on('click', function () { $(this).next().click(); }).css('color', '#000000').appendTo(interraction);
+              $('<input>').addClass('colorButton').on('change', function () { changeColor(task.idUV, this.value); }).attr('type', 'color').css('display', 'none').appendTo(interraction);
             }
           }
           else if (group.type == 'uv') {
             if (uvs.search(task.subject) != -1)
-              option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Echanger cet UV").on('click', function() { seeOthers(task.subject, task.type, task.idUV, task.id); }).appendTo(interraction);
+              option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Echanger cet UV").on('click', function () { seeOthers(task.subject, task.type, task.idUV, task.id); }).appendTo(interraction);
 
-            option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function() { seeUVInformations(task); }).appendTo(interraction);
+            option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function () { seeUVInformations(task); }).appendTo(interraction);
           }
 
           interraction.appendTo(card);
@@ -2317,22 +2331,22 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
           interraction = div.clone().addClass('interraction');
           option = button.clone().addClass('option').css('background-color', task.bgColor).css('color', getFgColor(task.bgColor));
 
-          option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function() { seeEventInformations(task); }).appendTo(interraction);
+          option.clone().html("<i class='fa fa-info' aria-hidden='true'></i> Informations").on('click', function () { seeEventInformations(task); }).appendTo(interraction);
           if (task.creator == window.sessionLogin)
-            option.clone().html("<i class='fa fa-edit' aria-hidden='true'></i> Modifier").on('click', function() { createEvenement(task.day, task.timeText.split('-')[0], task.timeText.split('-')[1], task.subject, task.description, task.location, task.type, task.idEvent); }).appendTo(interraction);
+            option.clone().html("<i class='fa fa-edit' aria-hidden='true'></i> Modifier").on('click', function () { createEvenement(task.day, task.timeText.split('-')[0], task.timeText.split('-')[1], task.subject, task.description, task.location, task.type, task.idEvent); }).appendTo(interraction);
           else
-            option.clone().html("<i class='fa fa-times' aria-hidden='true'></i> Ne plus suivre").on('click', function() { deleteEvenement(task.idEvent); }).appendTo(interraction);
+            option.clone().html("<i class='fa fa-times' aria-hidden='true'></i> Ne plus suivre").on('click', function () { deleteEvenement(task.idEvent); }).appendTo(interraction);
 
           colorButton = button.clone().addClass('colorButton');
           window.colors.forEach(function (color) {
             if (color == task.bgColor)
-              colorButton.clone().html('<i class="fa fa-times" aria-hidden="true"></i>').on('click', function() { changeColor(task.idEvent, '#NULL', 'idEvent'); }).css('background-color', color).css('color', getFgColor(color)).appendTo(interraction);
+              colorButton.clone().html('<i class="fa fa-times" aria-hidden="true"></i>').on('click', function () { changeColor(task.idEvent, '#NULL', 'idEvent'); }).css('background-color', color).css('color', getFgColor(color)).appendTo(interraction);
             else
-              colorButton.clone().text('0').on('click', function() { changeColor(task.idEvent, color, 'idEvent'); }).css('background-color', color).css('color', color).appendTo(interraction);
+              colorButton.clone().text('0').on('click', function () { changeColor(task.idEvent, color, 'idEvent'); }).css('background-color', color).css('color', color).appendTo(interraction);
           });
 
-          $('<i></i>').addClass('colorButton fa fa-pencil-square-o').on('click', function() { $( this ).next().click(); }).css('color', '#000000').appendTo(interraction);
-          $('<input>').addClass('colorButton').on('change', function() { changeColor(task.idEvent, this.value, 'idEvent'); }).attr('type', 'color').css('display', 'none').appendTo(interraction);
+          $('<i></i>').addClass('colorButton fa fa-pencil-square-o').on('click', function () { $(this).next().click(); }).css('color', '#000000').appendTo(interraction);
+          $('<input>').addClass('colorButton').on('change', function () { changeColor(task.idEvent, this.value, 'idEvent'); }).attr('type', 'color').css('display', 'none').appendTo(interraction);
 
           interraction.appendTo(card);
           card.on('click', function () {
@@ -2350,7 +2364,7 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
   });
 }
 
-var generateCalendar = function(tasks, sides, uvs, daysInfo) {
+var generateCalendar = function (tasks, sides, uvs, daysInfo) {
   console.time('calendar');
   var div = $('<div></div>');
   var schedule = div.clone().addClass('calendar-container');
@@ -2363,14 +2377,14 @@ var generateCalendar = function(tasks, sides, uvs, daysInfo) {
   var hour = date.getHours();
 
   // On check si aujourd'hui fais parti de la semaine choisie
-  if (Date.parse(window.get.week) + (1000*60*60*24*(currentDay + 2)) < Date.now())
+  if (Date.parse(window.get.week) + (1000 * 60 * 60 * 24 * (currentDay + 2)) < Date.now())
     currentDay = 7;
   else if (Date.parse(window.get.week) > Date.now())
     currentDay = -1;
 
   // Préparation du header
   var classDay = '';
-  window.headers.forEach(function(element, day) {
+  window.headers.forEach(function (element, day) {
     if ((window.get.mode === 'semaine' || window.get.mode === 'organiser') && $('#withWeekTool').prop('checked')) {
       if (day < currentDay)
         classDay = 'passedDay';
@@ -2464,7 +2478,7 @@ var generateCalendar = function(tasks, sides, uvs, daysInfo) {
         else if (j > currentDay) {
           grid.addClass('futureDay');
 
-        for (var i = 0; i < (window.HOUR_MAX - window.HOUR_MIN) * 2; i++) {
+          for (var i = 0; i < (window.HOUR_MAX - window.HOUR_MIN) * 2; i++) {
             (function (i) {
               $(grid.children()[i]).addClass('futureHour').html('<i class="fa fa-plus" aria-hidden="true"></i>').on('click', function () {
                 createEvenement(j, (window.HOUR_MIN + i / 2), (window.HOUR_MIN + i / 2) + 1);
@@ -2654,24 +2668,24 @@ var setCalendar = function (day) {
   }
 
   var diff = false;
-  headers.each(function(index) {
+  headers.each(function (index) {
     if (index >= length)
       return
 
     if (indexs.indexOf(index) === -1) {
-      if ($( this ).css('display') === 'block')
+      if ($(this).css('display') === 'block')
         diff = true;
 
-      $( this ).css('display', 'none');
+      $(this).css('display', 'none');
       $(days[index * sides]).css('display', 'none');
       if (sides === 2)
         $(days[index * sides + 1]).css('display', 'none');
     }
     else {
-      if ($( this ).css('display') === 'none')
+      if ($(this).css('display') === 'none')
         diff = true;
 
-      $( this ).css('display', 'block');
+      $(this).css('display', 'block');
       $(days[index * sides]).css('display', 'block');
       if (sides === 2)
         $(days[index * sides + 1]).css('display', 'block');

@@ -86,12 +86,8 @@ input {
 
 /* Header */
 #header {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 40px;
-  background-color: #273036;
   padding-top: 10px;
   padding-left: 10px;
   z-index: 75;
@@ -105,7 +101,6 @@ input {
   padding-right: 10px;
   background-color: transparent;
   border: none;
-  color: #FFF;
   cursor: pointer;
 }
 
@@ -122,7 +117,6 @@ input {
   padding: 0;
   background-color: transparent;
   border: none;
-  color: #FFF;
   cursor: pointer;
 }
 
@@ -132,8 +126,6 @@ input {
   margin-left: 5px;
   padding: 0;
   background-color: transparent;
-  border: none;
-  color: #FFF;
   cursor: pointer;
 }
 
@@ -144,7 +136,6 @@ input {
   padding: 0;
   background-color: transparent;
   border: none;
-  color: #FFF;
   cursor: pointer;
 }
 
@@ -395,13 +386,8 @@ button.option:last-child:nth-child(2n+1) {
 }
 
 #title {
-  position: fixed;
-  left: 50%;
-  width: 90%;
+  width: 100%;
   text-align: center;
-  transform: translateX(-50%);
-  padding-top: 50px;
-  color: #FFF;
   font-size: 20px;
   height: 50px;
 }
@@ -410,18 +396,12 @@ button.option:last-child:nth-child(2n+1) {
 /* Calendar */
 #otherDay {
   display: none;
-  position: absolute;
-  top: 100px;
-  background-color: transparent;
-  border: none;
   height: 30px;
   width: 60px;
   z-index: 25;
-  text-align: center;
-  padding: 0;
+  /* text-align: center; */
   margin: auto;
-  left: 50%;
-  transform: translate(-50%, 0);
+  margin-bottom: -30px;
 }
 
 #otherDay button {
@@ -434,7 +414,6 @@ button.option:last-child:nth-child(2n+1) {
 
 #calendar-container {
   margin: 0 auto;
-  padding-top: 100px;
 }
 
 #calendar-container.calendar-exported {
@@ -745,7 +724,7 @@ background-color: #FFFFFF;
   transition: all 0.5s ease;
 }
 
-#popup {
+#popup, #prevoir {
   flex-wrap: wrap;
   position: absolute;
   left: 50%;
@@ -770,7 +749,7 @@ background-color: #FFFFFF;
   overflow-x: hidden;
 }
 
-#popupHead {
+#popupHead, #prevoirHead {
   top: 0;
   left: 0;
   margin: 0px;
@@ -793,7 +772,7 @@ background-color: #FFFFFF;
   padding: 2px;
 }
 
-#popupContent {
+#popupContent, #future {
   overflow: auto;
 }
 
