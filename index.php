@@ -33,7 +33,7 @@
     <div id="future">
       <h2>↯ Copiez vos horaires prévisionnels ci-dessous ↯</h2>
       <p>
-        Accessible sur <a href="https://webapplis.utc.fr/smeappli/inscriptions/index.xhtml" target="_blank">cette page</a>, rentrez vos UVs puis cliquez sur le bouton <button id="horaires-p" onclick="this.title = 'Sur l\'autre site'" title="Pas ici banane">Horaires prévisionnels</button>, sélectionnez tous les horaires du tableau (<kbd id="c-a">Ctrl-A</kbd>, en vrac c'est pas grave) et copiez le ci-dessous.
+        Accessible sur <a href="https://webapplis.utc.fr/smeappli/inscriptions/index.xhtml" target="_blank">cette page</a>, rentrez vos UVs puis cliquez sur le bouton <button id="horaires-p" onclick="this.title = ['Sur l\'autre site', 'Pas ici banane'][+(this.title[0] == 'S')]" title="Pas ici banane">Horaires prévisionnels</button>, sélectionnez tous les horaires du tableau (<kbd id="c-a">Ctrl-A</kbd>, en vrac c'est pas grave) et copiez le ci-dessous.
       </p>
 
       <p>
