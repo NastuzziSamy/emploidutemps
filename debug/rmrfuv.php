@@ -10,7 +10,7 @@
 
     if ($query->rowCount()) {
       $data = $query->fetch();
-      $GLOBALS['db']->request('DELETE FROM uvs_followed WHERE id IN (?)', [implode(', ', $data)]);
+      $GLOBALS['db']->request('DELETE FROM uvs_followed WHERE id IN (?)', array(implode(', ', $data)));
     }
   }
 
