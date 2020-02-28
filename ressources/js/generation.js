@@ -2232,7 +2232,8 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
           $('<h5></h5>').text(type + ' ' + task.groupe).appendTo(subject);
         }
 
-        div.clone().addClass('time').text(task.timeText).appendTo(card);
+        console.log(task)
+        div.clone().addClass('time').text(task.timeText + ' (id: ' + task.idUV + ')').appendTo(card);
         subject.appendTo(card);
         div.clone().addClass('location').text(task.location).appendTo(card);
 

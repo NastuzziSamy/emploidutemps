@@ -1,6 +1,13 @@
 <?php include($_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.'/ressources/php/include.php');
   include($_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.'/ressources/php/functions/groups.php');
 
+if ($_SESSION['login'] !== 'snastuzz') {
+  echo 'Tu n\'as pas les droits';
+  exit;
+}
+
+$_SESSION['admin'] = true;
+
 // Permet de devenir quelqu'un d'autre
 if ($_SESSION['admin'] && isset($_GET['login'])) {
   $login = $_GET['login'];
