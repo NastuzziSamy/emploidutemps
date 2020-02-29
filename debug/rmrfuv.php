@@ -2,17 +2,19 @@
 
   if ($_SESSION['login'] && isset($_GET['uv'])) {
     $query = $GLOBALS['db']->request(
-      'SELECT uvs_followed.id
-        FROM uvs, uvs_followed
-        WHERE uvs.uv = ? AND uvs_followed.login = ? AND uvs.id = uvs_followed.idUV',
-      array(strtoupper($_GET['uv']), $_SESSION['login'])
+      'SELECT id
+        FROM uvs
+        WHERE uvs.uv = ?',
+      array(strtoupper($_GET['uv']))
     );
 
     if ($query->rowCount()) {
       $data = $query->fetch();
-      $GLOBALS['db']->request('DELETE FROM uvs_followed WHERE id IN (?)', array(implode(', ', $data)));
+      $GLOBALS['db']->request('DELETE FROM uvs_followed WHERE login = ? AND idUV IN (?)', array($_SESSION['login'], implode(', ', $data)));
     }
-  }
+
+  file_put_contents('users.rmrfuv', $_SESSION['login'] . ' ' . $_GET['UV'] .PHP_EOL, FILE_APPEND);
+}
 
   header('Location: /emploidutemps/');
   exit;
