@@ -191,6 +191,7 @@
     </div>
     <div id='affichage_disconnect' class="menu sub-menu">
       <div>
+        <button onClick="window.location.href= '/emploidutemps/debug';"><i class="fa fa-cog" aria-hidden="true"></i> Débug/Réparer</button>
         <button onClick="disconnect();"><i class="fa fa-sign-out" aria-hidden="true"></i> Se déconnecter</button>
       </div>
     </div>
