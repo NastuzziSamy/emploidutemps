@@ -2,7 +2,6 @@
   date_default_timezone_set('Europe/Paris');
   mb_internal_encoding("UTF-8");
   session_start();
-
   //ini_set('display_errors', 1);  ini_set('display_startup_errors', 1);  error_reporting(E_ALL);
 
   $etuPic = '<i class="searchImg fa fa-4x fa-user-o" style="padding-left: 1px; padding-top: 3px;" aria-hidden="true"></i>';
@@ -66,6 +65,15 @@
         $_SESSION['week'] = $_GET['week'];
       else
         $_SESSION['week'] = date('Y-m-d', strtotime('monday this week', strtotime($week)));
+
+      $query = $GLOBALS['db']->request(
+        'SELECT * FROM students WHERE login = ?',
+        array($_SESSION['login'])
+      );
+
+      if ($query->rowCount() === 0) {
+        include($_SERVER['DOCUMENT_ROOT'] . '/emploidutemps/' . '/ressources/php/moulinette.php');
+      }
 
       $query = $GLOBALS['db']->request(
         'SELECT * FROM students WHERE login = ?',
