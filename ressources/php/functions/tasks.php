@@ -178,6 +178,21 @@ function printExchangesReceived($login, $option = NULL) {
     $task['note'] = 'Reçue';
     $task['exchange'] = array_merge($infos, getUVInfosFromIdUV($infos['idUV2']));
 
+    if ($infos['exchanged'] == '1') {
+      $query = $GLOBALS['db']->request(
+        'SELECT students.login, students.email
+      FROM students, exchanges_sent
+      WHERE students.login = exchanges_sent.login AND exchanges_sent.id = ?
+      LIMIT 1',
+        [$infos['idSent']]
+      );
+
+      if ($query->rowCount() == 1) {
+        $exchangedStudent = $query->fetch();
+        $task['exchange']['with'] = $exchangedStudent;
+      }
+    }
+
     if ($infos['available'] == '1' && $infos['exchanged'] == '1') {
       if (count(getCanceledExchanges($login, NULL, $infos['idExchange'])) == 1) {
         $data = getCanceledExchanges($login, NULL, $infos['idExchange']);
@@ -226,6 +241,21 @@ function printExchangesSent($login, $option = NULL) {
     $task['idUV'] = $infos['idUV2'];
     $task['note'] = 'Envoyée';
     $task['exchange'] = array_merge($infos, getUVInfosFromIdUV($infos['idUV2']));
+
+    if ($infos['exchanged'] == '1') {
+      $query = $GLOBALS['db']->request(
+        'SELECT students.login, students.email
+      FROM students, exchanges_received
+      WHERE students.login = exchanges_received.login AND exchanges_received.id = ?
+      LIMIT 1',
+        [$infos['idReceived']]
+      );
+
+      if ($query->rowCount() == 1) {
+        $exchangedStudent = $query->fetch();
+        $task['exchange']['with'] = $exchangedStudent;
+      }
+    }
 
     if ($infos['available'] == '1' && $infos['exchanged'] == '1') {
       if (count(getCanceledExchanges($login, NULL, $infos['idExchange'])) == 1) {

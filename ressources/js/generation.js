@@ -2316,7 +2316,7 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
                 }
                 else {
                   if (toExchange.exchanged == '1') {
-                    type = ' - Acceptée';
+                    type = ' - Acceptée (avec <a href=mailto:"' + toExchange.with.email + '">' + toExchange.with.login + '</a>)';
                     bgColor = '#00FF00';
 
                     button.clone().addClass('option').css('background-color', bgColor).css('color', getFgColor(bgColor)).html('<i class="fa fa-chevron-left" aria-hidden="true"></i> Annuler l\'échange').on('click', function () {
