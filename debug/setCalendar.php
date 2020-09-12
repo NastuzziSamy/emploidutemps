@@ -64,9 +64,9 @@
       exit;
     }
 
-    $c = (isset($_GET['C']) && $_GET['C']);
-    $d = (isset($_GET['D']) && $_GET['D']);
-    $t = (isset($_GET['T']) && $_GET['T']);
+    $c = (int) (isset($_GET['C']) && $_GET['C']);
+    $d = (int) (isset($_GET['D']) && $_GET['D']);
+    $t = (int) (isset($_GET['T']) && $_GET['T']);
 
     if (empty($_GET['subject']))
       $_GET['subject'] = NULL;

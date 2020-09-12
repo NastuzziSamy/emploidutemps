@@ -263,7 +263,7 @@ Le SiMDE',
 
   function getUVsFollowed($login, $enabled = 1, $exchanged = NULL, $day = NULL) {
     $query = $GLOBALS['db']->request(
-      'SELECT uvs_followed.id, uvs_followed.idUV, uvs.uv, uvs.type, uvs.group, uvs.day, uvs.begin, uvs.end, uvs.room, uvs.frequency, uvs.week, uvs.nbrEtu, uvs_followed.color, uvs_colors.color AS uvColor
+    'SELECT uvs_followed.id, uvs_followed.idUV, uvs.uv, uvs.type, uvs.group, uvs.day, uvs.begin, uvs.end, uvs.room, uvs.frequency, uvs.week, uvs.nbrEtu, uvs_followed.color, uvs_colors.color AS uvColor, uvs_followed.visio
         FROM uvs, uvs_followed, uvs_colors
         WHERE uvs_followed.login = ? AND uvs_followed.enabled = ? AND (? IS NULL OR uvs_followed.exchanged = ?) AND (? IS NULL OR uvs.day = ?) AND uvs.uv = uvs_colors.uv AND uvs.id = uvs_followed.idUV
         ORDER BY uvs.day, uvs.begin, week, uvs.group',

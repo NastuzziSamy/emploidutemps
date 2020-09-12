@@ -140,6 +140,11 @@ elseif (isGetSet(array('mode')) && $_GET['mode'] == 'all') {
         else
           continue;
 
+        if (isset($task['visio']) && $task['visio'] === $day['week']) {
+          $summary .= ' (distanciel)';
+          $description = ($description != NULL ? $description . '. ' : '') . 'A réaliser en distanciel';
+        }
+
         printEvent($startDay, $beginHour, $endDay, $endHour, $summary, $description, $task['room'], $alarm);
       }
     }

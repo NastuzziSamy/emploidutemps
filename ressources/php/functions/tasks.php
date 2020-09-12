@@ -37,6 +37,7 @@ function addTask($taskType, $info, $infosArrays, $side = NULL) {
       'startTime' => $begin,
       'timeText' => ($end - $begin == 24 ? 'Journée' : $infosArray['begin'].'-'.$infosArray['end']),
       'bgColor' => (isset($infosArray['color']) ? $infosArray['color'] : (isset($infosArray['uvColor']) ? $infosArray['uvColor'] : getARandomColor())),
+      'visio' => $infosArray['visio']
     );
 
     // Ajout des infos en fonction du type de tâche
@@ -111,6 +112,10 @@ function printUVsFollowed($login, $side = NULL, $enabled = 1, $exchanged = NULL)
       $tasks[$key]['color'] = '#00FF00';
     elseif ($task['color'] == NULL)
       $tasks[$key]['color'] = $task['uvColor'];
+
+    if (isset($task['visio'])) {
+      $tasks[$key]['note'] .= 'En distanciel la semaine '.$task['visio'];
+    }
   }
 
   addTask('uv_followed', $login, $tasks, $side);
@@ -396,6 +401,14 @@ function printWeek($info, $week, $taskTypes = 'uv_followed') {
 
         if (isset($taskDay['week']) && $taskDay['week'] != NULL)
          $taskDay['note'] = 'Cette semaine '.$taskDay['week'];
+
+        if (isset($taskDay['visio'])) {
+          if ($taskDay['visio'] === $day['week']) {
+            $taskDay['note'] .= 'En distanciel cette semaine ' . $taskDay['visio'];
+          } else if ($_GET['mode'] !== 'semaine') {
+            $taskDay['note'] .= 'En distanciel semaine ' . $taskDay['visio'];
+          }
+        }
 
         $taskDay['week'] = NULL;
         $taskDay['frequency'] = 1;
