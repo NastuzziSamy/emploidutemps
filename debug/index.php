@@ -1,3 +1,8 @@
+<form method='post' action='/emploidutemps/debug/fromsme.php'>
+  Ajouter son calendrier à partir de l'email SME:<br />
+  <textarea cols="100" rows="25" name='email'></textarea><br />
+  <input type='submit' />
+</form>
 <form method='get' action='/emploidutemps/debug/addiduv.php'>
   Ajouter un créneau à son edt avec le numéro d'id:
   <input name='idUV' type='number' />

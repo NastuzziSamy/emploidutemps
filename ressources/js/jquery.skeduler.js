@@ -2,8 +2,8 @@ var defaultSettings = {
     headers: [],
     tasks: [],
 
-    //cardTemplate: '<div class="time">${horaire}</div><div>${uv}</div><div>(${type} ${groupe})</div><div>${salle}</div><div>${note}</div><div class="interraction" style="opacity: 0; visibility: hidden;">${interraction}</div>',
-    cardTemplate: '<div class="time">${horaire}</div><div class="uvType"><span>${uv}</span><h5>${type} ${groupe}</h5></div><div class="uvSalle">${salle}</div><div class="uvNote">${note}</div><div class="interraction" style="opacity: 0; visibility: hidden;">${interraction}</div>',
+    //cardTemplate: '<div class="time">${horaire}</div><div>${uv}</div><div>(${type} ${group})</div><div>${salle}</div><div>${note}</div><div class="interraction" style="opacity: 0; visibility: hidden;">${interraction}</div>',
+    cardTemplate: '<div class="time">${horaire}</div><div class="uvType"><span>${uv}</span><h5>${type} ${group}</h5></div><div class="uvSalle">${salle}</div><div class="uvNote">${note}</div><div class="interraction" style="opacity: 0; visibility: hidden;">${interraction}</div>',
     // OnClick event handler
     onClick: function (card) {
       if (window.click) {

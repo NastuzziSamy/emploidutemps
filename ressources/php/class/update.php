@@ -1,20 +1,20 @@
 <?php include($_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.'/ressources/php/class/ginger.php');
   include($_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.'/ressources/php/class/curl.php');
 
-$_SESSION['MODCASID'] = 'PMIQttPKqMYhhMI7coZIbnYzcotiU';
 $curl = new CURL(strpos($_SERVER['HTTP_HOST'],'utc') !== false);
-if (isset($_SESSION['MODCASID']))
-  $curl->setCookies('MODCASID='.$_SESSION['MODCASID']);
 
 class UPDATE
 {
+  // DEPECRATED: On ne passe plus par le SME. 
   const tempDir = '/logs/';
   const edtDir = '/ressources/edt/';
   const format1 = '/^(.*)([T|D|C])([ |0-9]{1,2}) ([ |A|B])';
   const format2 = '([A-Z]+)\.*\s*([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2}),F(.),S=(.{0,8}).*$/';
   const alignement = '\\1 \\2 \\3 \\5 \\6 \\7 \\9 \\8 \\4';
 
-  public static function checkModcasid ($curl) {
+  // DEPECRATED: On ne passe plus par le SME. 
+  public static function checkModcasid($curl)
+  {
     $result = $curl->get('http://wwwetu.utc.fr/sme/'); // Vive le php 5
     return !empty($result);
   }
@@ -22,7 +22,8 @@ class UPDATE
   public static function isUpdating () {
     return file_exists($_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.self::tempDir.'update');
   }
-
+  
+  // DEPECRATED: On ne passe plus par le SME. 
   public static function checkUpdate ($curl) {
     if (!self::checkModcasid($curl))
       return FALSE;
@@ -116,8 +117,8 @@ class UPDATE
     return FALSE;
   }
 
-
-  private static function getEdt ($curl) {
+  // DEPECRATED: On ne passe plus par le SME. 
+  public static function getEdt ($curl) {
     $edtDir = $_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.self::edtDir;
 
     if (!file_exists($edtDir)) { mkdir($edtDir, 0777, true); }
@@ -239,7 +240,7 @@ class UPDATE
   }
 
 
-  private static function insertEtu ($lineFromEtu) {
+  public static function insertEtu ($lineFromEtu) {
     $infoFromLine = array_values(array_filter(explode(' ', preg_replace('/, /', '', preg_replace('/ ([A-Z0-9]{3,8}) /', '\\1,', $lineFromEtu)))));
     $infoFromLine[3] = substr($infoFromLine[3], 0, -1);
 
@@ -260,7 +261,7 @@ class UPDATE
   }
 
 
-  private static function insertColor($uv) {
+  public static function insertColor($uv) {
     $queryIsColor = $GLOBALS['db']->prepare('SELECT color FROM uvs_colors WHERE uv = ?');
 
     $GLOBALS['db']->execute($queryIsColor, array($uv));
@@ -276,8 +277,8 @@ class UPDATE
   }
 
 
-  private static function insertUV ($elem) {
-    $query = 'SELECT id FROM uvs WHERE uv = ? AND type = ? AND groupe = ? AND day = ? AND begin = ? AND end = ? AND ';
+  public static function insertUV ($elem) {
+    $query = 'SELECT id FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ? AND day = ? AND begin = ? AND end = ? AND ';
     $jours = array('LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI', 'DIMANCHE');
 
     foreach ($jours as $i => $jour) {
@@ -309,7 +310,7 @@ class UPDATE
     $id = $data['id'];
 
     if (empty($id)) {
-      $queryAddUV = $GLOBALS['db']->prepare('INSERT INTO uvs(uv, type, groupe, day, begin, end, room, frequency, week) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)');
+      $queryAddUV = $GLOBALS['db']->prepare('INSERT INTO uvs(uv, type, uvs.group, day, begin, end, room, frequency, week) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)');
       $GLOBALS['db']->execute($queryAddUV, $elem);
       $GLOBALS['db']->execute($queryIsUV, $elem);
 
@@ -324,12 +325,12 @@ class UPDATE
   }
 
 
-  private static function insertCours ($login, $id) {
+  public static function insertCours ($login, $id) {
     $queryAddCours = $GLOBALS['db']->prepare('INSERT INTO uvs_followed(login, idUV) VALUES(?, ?)');
     $GLOBALS['db']->execute($queryAddCours, array($login, $id));
   }
 
-  private static function insertSalle($salle, $type, $jour, $debut, $fin) {
+  public static function insertSalle($salle, $type, $jour, $debut, $fin) {
     $debutDispo = array(8 => '08:00', 9 => '09:00', 10 => '10:15', 11 => '11:15', 12 => '12:15', 13 => '13:15', 14 => '14:15', 15 => '15:15', 16 => '16:30', 17 => '17:30', 18=> '18:30', 19 => '19:30');
     $finDispo = array(8 => '08:00', 9 => '09:00', 10 => '10:00', 11 => '11:15', 12 => '12:15', 13 => '13:15', 14 => '14:15', 15 => '15:15', 16 => '16:15', 17 => '17:30', 18 => '18:30', 19 => '19:30', 20 => '20:30', 21 => '21:00');
 
@@ -346,7 +347,9 @@ class UPDATE
     }
   }
 
-  private static function insertSalles() {
+  public static function insertSalles() {
+    static::resetRooms();
+
     $query = $GLOBALS['db']->prepare('SELECT room, type FROM uvs WHERE room != "" AND type != "T" GROUP BY room');
     $GLOBALS['db']->execute($query, array());
     $salles = $query->fetchAll();
@@ -370,15 +373,14 @@ class UPDATE
             $debutDispo = $info['end'];
           }
 
-          $fin = $info['end'][0] * 60 + $info['end'][1];
           self::insertSalle($salle['room'], $salle['type'], $jour, $infos[count($infos) - 1]['end'], $finDispo);
         }
       }
     }
   }
 
-
-  private static function parseLine ($login, $lineToParse) {
+  // DEPECRATED: On ne passe plus par le SME. 
+  public static function parseLine ($login, $lineToParse) {
     $elem = array_values(array_filter(explode(' ', preg_replace(self::format1.'\s*'.self::format2, self::alignement, $lineToParse))));
 
     if (!isset($elem[8])) {
@@ -396,15 +398,16 @@ class UPDATE
       self::parseLine($login, preg_replace(self::format1.'.*\/'.self::format2, self::alignement, $lineToParse));
   }
 
-
-  private static function setCurrentLogin ($login) {
+  // DEPECRATED: On ne passe plus par le SME. 
+  public static function setCurrentLogin ($login) {
     $file = $_SERVER['DOCUMENT_ROOT'].'/emploidutemps/'.self::tempDir.'login';
 
     file_put_contents($file, time().' '.$login);
     return $login;
   }
 
-  public static function resetdb () {
+  public static function resetdb()
+  {
     $GLOBALS['db']->request('TRUNCATE TABLE events;
       TRUNCATE TABLE events_followed;
       TRUNCATE TABLE exchanges;
@@ -420,6 +423,11 @@ class UPDATE
       TRUNCATE TABLE uvs_followed;
       TRUNCATE TABLE uvs_colors;
       TRUNCATE TABLE uvs_rooms;', array());
+  }
+
+  public static function resetRooms()
+  {
+    $GLOBALS['db']->request('TRUNCATE TABLE uvs_rooms;', array());
   }
 }
 ?>

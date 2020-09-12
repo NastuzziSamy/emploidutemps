@@ -6,12 +6,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=0.75">
-  <link rel="stylesheet" href="ressources/css/style.css" type="text/css">
-  <link rel="stylesheet" href="ressources/css/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="ressources/css/jquery-ui.min.css">
-  <link rel="stylesheet" href="ressources/css/jquery-ui.structure.min.css">
-  <link rel="stylesheet" href="ressources/css/jquery.timepicker.css">
-  <link rel="stylesheet" href="ressources/css/horaires-previsionnels.css">
+  <link rel="stylesheet" href="/emploidutemps/ressources/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/emploidutemps/ressources/css/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/emploidutemps/ressources/css/jquery-ui.min.css">
+  <link rel="stylesheet" href="/emploidutemps/ressources/css/jquery-ui.structure.min.css">
+  <link rel="stylesheet" href="/emploidutemps/ressources/css/jquery.timepicker.css">
+  <link rel="stylesheet" href="/emploidutemps/ressources/css/horaires-previsionnels.css">
   <title>Emploi d'UTemps</title>
 </head>
 
@@ -39,8 +39,7 @@
         tous les horaires du tableau (<kbd id="c-a">Ctrl-A</kbd>, en vrac c'est pas grave) et copiez le ci-dessous.
       </p>
       <p>
-        Si le site d'inscription est fermé, vous pouvez utiliser <a href="https://webapplis.utc.fr/smeappli/testuvsetu/index.xhtml"
-        target="_blank">ce site de test</a>, idem copiez tout ci-dessous.
+        Si le site d'inscription est fermé, vous pouvez utiliser <a href="https://webapplis.utc.fr/smeappli/testuvsetu/index.xhtml" target="_blank">ce site de test</a>, idem copiez tout ci-dessous.
       </p>
 
       <p>
@@ -49,9 +48,7 @@
         avez 3 créneaux en même temps ça risque de se superposer.
       </p>
 
-      <textarea name="prevoirText" id="prevoirText" rows="5" placeholder="→ Copiez vos horaires ici ←">
-        <?php if (isset($_SESSION['prevoir'])) echo $_SESSION['prevoir']; ?>
-      </textarea>
+      <textarea name="prevoirText" id="prevoirText" rows="5" placeholder="→ Copiez vos horaires ici ←"><?php if (isset($_SESSION['prevoir'])) echo $_SESSION['prevoir']; ?></textarea>
       <p class="center" id="prevoirInfo"></p>
       <p id="prevoirStats"></p>
 
@@ -76,7 +73,7 @@
         </div>
         <span <?php if ($_SESSION['extern']) {
                 echo 'style="display:none"';
-              } ?>> 
+              } ?>>
           <input name='mode' id='mode_classique' type='radio' onClick='changeMode("classique");'><label for='mode_classique'> Classique</label><br />
           <input name='mode' id='mode_comparer' type='radio' onClick='changeMode("comparer");'><label for='mode_comparer'> Comparer</label><br />
           <input name='mode' id='mode_modifier' type='radio' onClick='changeMode("modifier");'><label for='mode_modifier'> Modifier</label><br />
@@ -202,17 +199,17 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="ressources/js/jquery-3.1.1.min.js"></script>
-  <script type="text/javascript" src="ressources/js/generation.js"></script>
-  <script type="text/javascript" src="ressources/js/jquery.touchSwipe.min.js"></script>
-  <script type="text/javascript" src="ressources/js/html2canvas.min.js"></script>
-  <script type="text/javascript" src="ressources/js/jspdf.min.js"></script>
-  <script type="text/javascript" src="ressources/js/clipboard.min.js"></script>
-  <script type="text/javascript" src="ressources/js/jquery.mininoty.min.js"></script>
-  <script type="text/javascript" src="ressources/js/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="ressources/js/datapicker-fr.js"></script>
-  <script type="text/javascript" src="ressources/js/jquery.timepicker.min.js"></script>
-  <script src="ressources/js/horaires-previsionnels.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/generation.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/jquery.touchSwipe.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/html2canvas.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/jspdf.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/clipboard.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/jquery.mininoty.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/datapicker-fr.js"></script>
+  <script type="text/javascript" src="/emploidutemps/ressources/js/jquery.timepicker.min.js"></script>
+  <script src="/emploidutemps/ressources/js/horaires-previsionnels.js"></script>
   <script type="text/javascript">
     generateCalendar([], 1, {});
     setCalendar();
@@ -250,33 +247,38 @@
                   ?>
 
     if (isNew) {
-      setTimeout(function() {
-        popup('Bienvenue sur le service Emploid\'UTemps', $('<div></div>').addClass('centerCard')
-          .append($('<div></div>').text('Salut ! Bienvenue sur un service proposé par le BDE/SiMDE qui te permettra de réaliser tout un tas de choses avec ton emploi du temps étudiant.'))
-          .append($('<br /><br />'))
-          .append($('<div></div>').text('Emploid\'UTemps te permet de faire plusieurs choses:'))
-          .append($('<div></div>').text('- Afficher un emploi du temps (comme le tien, celui d\'un.e de tes potes ou d\'une UV) sur une semaine type'))
-          .append($('<div></div>').text('- Comparer ton emploi du temps avec un autre (comme celui d\'un.e de tes potes ou d\'une UV) sur une semaine type'))
-          .append($('<div></div>').text('- Modifier ton emploi du temps en échangeant tes créneaux avec d\'autres valides et disponibles (de façon très simple)'))
-          .append($('<div></div>').text('- Afficher ton emploi du temps d\'une semaine réelle (comme afficher ton emploi du temps sur la semaine du 05/03)'))
-          .append($('<div></div>').text('- Afficher simultanément plusieurs emplois du temps pour organiser facilement des réunions ou des évènements'))
-          .append($('<br /><br />'))
-          .append($('<div></div>').text('Mais c\'est aussi encore plus:'))
-          .append($('<div></div>').text('- Rechercher via un Trombi un.e étudiant.e'))
-          .append($('<div></div>').text('- Affichage automatique de tes associations avec l\'affichage des membres'))
-          .append($('<div></div>').text('- Une gestion totale d\'un système de groupe que tu peux toi-même créer'))
-          .append($('<div></div>').text('- Des possibilités infinies d\'export: en pdf, en image, en ics pour le mettre dans ton agenda informatique...'))
-          .append($('<div></div>').text('- Un système facile et intelligent d\'échange de créneaux'))
-          .append($('<div></div>').text('- Une paramétration et des outils'))
-          .append($('<div></div>').text('- Un affichage des salles de cours et de TDs libres'))
-          .append($('<div></div>').text('- Un site adapté aux mobiles'))
-          .append($('<br /><br />'))
-          .append($('<div></div>').text('En cliquant sur le bouton Accepter, j\'accepte d\'utiliser le service de la meilleure des manières et d\'être responsable des mes choix (lors de mes échanges):'))
-          .append($('<button></button>').text('Accepter').on('click', function() {
-            changeStatus(1);
-          }))
-        );
-      }, 1000);
+    setTimeout(function() {
+      popup('Bienvenue sur le service Emploid\'UTemps', $('<div></div>').addClass('centerCard')
+        .append($('<div></div>').text('Salut ! Bienvenue sur un service proposé par le BDE/SiMDE qui te permettra de réaliser tout un tas de choses avec ton emploi du temps étudiant.'))
+        .append($('<br /><br />'))
+        .append($('<div></div>').text('Emploi d\'UTemps te permet de faire plusieurs choses:'))
+        .append($('<br /><br />'))
+        .append($('<div></div>').text('- Afficher un emploi du temps (comme le tien, celui d\'un(e) de tes potes ou d\'une UV) sur une semaine type'))
+        .append($('<div></div>').text('- Comparer ton emploi du temps avec un autre (comme celui d\'un(e) de tes potes ou d\'une UV) sur une semaine type'))
+        // .append($('<div></div>').text('- Modifier ton emploi du temps en échangeant tes créneaux avec d\'autres valides et disponibles (de façon très simple)'))
+        .append($('<div></div>').text('- Afficher ton emploi du temps d\'une semaine réelle (comme afficher ton emploi du temps sur la semaine du 05/03)'))
+        .append($('<div></div>').text('- Afficher simultanément plusieurs emplois du temps pour organiser facilement des réunions ou des évènements'))
+        // .append($('<br /><br />'))
+        // .append($('<div></div>').text('Mais c\'est aussi encore plus:'))
+        .append($('<div></div>').text('- Rechercher via un Trombi un(e) étudiant(e)'))
+        // .append($('<div></div>').text('- Affichage automatique de tes associations avec l\'affichage des membres'))
+        // .append($('<div></div>').text('- Une gestion totale d\'un système de groupe que tu peux toi-même créer'))
+        .append($('<div></div>').text('- Des possibilités infinies d\'export: en pdf, en image, en ics pour le mettre dans ton agenda informatique...'))
+        // .append($('<div></div>').text('- Un système facile et intelligent d\'échange de créneaux'))
+        .append($('<div></div>').text('- Une paramétration et des outils'))
+        .append($('<div></div>').text('- Un affichage des salles de cours et de TDs libres'))
+        .append($('<div></div>').text('- Un site adapté aux mobiles'))
+        .append($('<br /><br />'))
+        .append($('<div></div>').text('Ce semestre, en raison du Covid-19, les échanges sont interdits.'))
+        .append($('<div></div>').text('Le bouton Débug vous permet de faire à peu près ce que vous voulez de votre edt.'))
+        .append($('<br /><br />'))
+        .append($('<div></div>').text('En cliquant sur le bouton Accepter, j\'accepte d\'utiliser le service de la meilleure des manières et d\'avoir un usage responsable:'))
+        .append($('<br /><br />'))
+        .append($('<button></button>').text('Accepter').on('click', function() {
+          changeStatus(1);
+        }))
+      );
+    }, 1000);
     }
 
     $("body").keyup(function(event) {

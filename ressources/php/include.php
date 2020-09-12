@@ -2,7 +2,7 @@
   date_default_timezone_set('Europe/Paris');
   mb_internal_encoding("UTF-8");
   session_start();
-  //ini_set('display_errors', 1);  ini_set('display_startup_errors', 1);  error_reporting(E_ALL);
+  // ini_set('display_errors', 1);  ini_set('display_startup_errors', 1);  error_reporting(E_ALL);
 
   $etuPic = '<i class="searchImg fa fa-4x fa-user-o" style="padding-left: 1px; padding-top: 3px;" aria-hidden="true"></i>';
   $uvPic = '<i class="searchImg fa fa-4x fa-graduation-cap" style="margin-left:10%;" aria-hidden="true"></i>';
@@ -254,7 +254,7 @@ Le SiMDE',
       'SELECT uvs_followed.id, uvs_followed.login, uvs_followed.enabled, uvs_followed.exchanged, uvs_followed.color, uvs_colors.color AS uvColor
         FROM uvs, uvs_followed, uvs_colors
         WHERE uvs_followed.idUV = ? AND (? IS NULL OR uvs_followed.enabled = ?) AND (? IS NULL OR uvs_followed.exchanged = ?) AND uvs.uv = uvs_colors.uv AND uvs.id = uvs_followed.idUV
-        ORDER BY uvs.day, uvs.begin, week, groupe',
+        ORDER BY uvs.day, uvs.begin, week, uvs.group',
       array($idUV, $available, $available, $exchanged, $exchanged)
     );
 
@@ -263,10 +263,10 @@ Le SiMDE',
 
   function getUVsFollowed($login, $enabled = 1, $exchanged = NULL, $day = NULL) {
     $query = $GLOBALS['db']->request(
-      'SELECT uvs_followed.id, uvs_followed.idUV, uvs.uv, uvs.type, uvs.groupe, uvs.day, uvs.begin, uvs.end, uvs.room, uvs.frequency, uvs.week, uvs.nbrEtu, uvs_followed.color, uvs_colors.color AS uvColor
+      'SELECT uvs_followed.id, uvs_followed.idUV, uvs.uv, uvs.type, uvs.group, uvs.day, uvs.begin, uvs.end, uvs.room, uvs.frequency, uvs.week, uvs.nbrEtu, uvs_followed.color, uvs_colors.color AS uvColor
         FROM uvs, uvs_followed, uvs_colors
         WHERE uvs_followed.login = ? AND uvs_followed.enabled = ? AND (? IS NULL OR uvs_followed.exchanged = ?) AND (? IS NULL OR uvs.day = ?) AND uvs.uv = uvs_colors.uv AND uvs.id = uvs_followed.idUV
-        ORDER BY uvs.day, uvs.begin, week, groupe',
+        ORDER BY uvs.day, uvs.begin, week, uvs.group',
       array($login, $enabled, $exchanged, $exchanged, $day, $day)
     );
 
@@ -287,10 +287,10 @@ Le SiMDE',
 
   function getUV($uv = NULL, $type = NULL, $day = NULL, $id = NULL) {
     $query = $GLOBALS['db']->request(
-      'SELECT uvs.id, uvs.uv, type, groupe, day, begin, end, room, frequency, week, nbrEtu, color
+      'SELECT uvs.id, uvs.uv, type, uvs.group, day, begin, end, room, frequency, week, nbrEtu, color
         FROM uvs, uvs_colors
         WHERE uvs.uv = uvs_colors.uv AND (? IS NULL OR uvs.uv = ?) AND (? IS NULL OR type = ?) AND (? IS NULL OR day = ?) AND (? IS NULL OR id = ?)
-        ORDER BY uv, day, begin, week, groupe',
+        ORDER BY uv, day, begin, week, uvs.group',
       array($uv, $uv, $type, $type, $day, $day, $id, $id)
     );
 
@@ -299,7 +299,7 @@ Le SiMDE',
 
   function getUVInfosFromIdUV($idUV) {
     $query = $GLOBALS['db']->request(
-      'SELECT id, uv, type, day, begin, end, room, groupe, frequency, week, nbrEtu
+      'SELECT id, uv, type, day, begin, end, room, uvs.group, frequency, week, nbrEtu
         FROM uvs
         WHERE uvs.id = ?',
       array($idUV)

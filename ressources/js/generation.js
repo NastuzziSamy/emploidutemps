@@ -61,8 +61,12 @@ var addGet = function (get) {
 };
 
 var changeMode = function (mode) {
-  window.get.mode = mode;
-  generate();
+  if (mode === 'modifier') {
+    $.miniNoty('<i class="fa fa-info-circle" aria-hidden="true"></i> En raison du Covid, il n\'est pas possible de changer son edt', 'normal');
+  } else {
+    window.get.mode = mode;
+    generate();
+  }
 };
 
 var promptPrevoir = function () {
@@ -126,7 +130,7 @@ var parsePrevoirPossibility = function (course) {
     day: course.day,
     duration: course.he - course.hs,
     frequency: 1,
-    groupe: '',
+    group: '',
     startTime: course.hs,
     subject: course.uv,
     timeText: course.h_start + "-" + course.h_end,
@@ -138,6 +142,11 @@ var parsePrevoirPossibility = function (course) {
 var generate = function (silentMode, callback) {
   if (window.get.mode === 'prevoir') {
     return;
+  }
+
+  if (window.get.mode === 'modifier') {
+    changeMode('modifier');
+    return changeMode('classique');
   }
   
   $('#affichage_prevoir').css('display', 'none');
@@ -183,6 +192,24 @@ var generate = function (silentMode, callback) {
     generateCalendar(data.tasks, data.infos.sides, data.infos.uvs, data.infos.daysInfo);
     generateMode();
     setCalendar();
+
+    if (window.get.mode === 'classique' && data.tasks.length === 0) {
+      popup('Emploi du temps vide, le modifier ?', $('<div></div>').addClass('centerCard')
+        .append($('<br /><br />'))
+        .append($("<form method='post' action='/emploidutemps/debug/fromsme.php'></form>")
+          .append($("<span>Ajouter son calendrier à partir de l'email SME:</span>"))
+          .append($("<br />"))
+          .append($("<textarea cols='75' rows='15' name='email'></textarea>"))
+          .append($("<br />"))
+          .append($("<button type='submit'>Charger son edt</button>")))
+        .append($('<br /><br />'))
+        .append($('<a href="/emploidutemps/debug"></a>').text('Débug/Réparer'))
+        .append($('<br /><br />'))
+        .append($('<button></button>').text('Fermer').on('click', function () {
+          closePopup();
+        }))
+        );
+    }
 
     if (callback)
       callback();
@@ -724,7 +751,8 @@ var seeUV = function (uv) {
   if (window.get.mode == 'comparer')
     window.get = { 'mode': 'comparer' };
   else if (window.get.mode == 'modifier')
-    window.get = { 'mode': 'modifier' };
+    // window.get = { 'mode': 'modifier' };
+    window.get = { 'mode': 'classique' }; // Covid
   else if (window.get.mode == 'semaine')
     window.get = { 'mode': 'semaine' };
   else
@@ -739,7 +767,7 @@ var seeUVInformations = function (task) {
   getRequest('lists.php', {
     'idUV': task.idUV
   }, function (data) {
-    var popupHead = 'Liste des ' + task.nbrEtu + ' étudiants en ' + (task.type == 'D' ? 'TD' : (task.type == 'T' ? 'TP' : 'cours')) + ' de ' + task.subject + ' de ' + task.timeText.replace('-', ' à ');
+    var popupHead = 'Liste des ' + task.nbrEtu + ' étudiants sur Emploi d\'UTemps en ' + (task.type == 'D' ? 'TD' : (task.type == 'T' ? 'TP' : 'cours')) + ' de ' + task.subject + ' de ' + task.timeText.replace('-', ' à ') + '<br /><i>Le service ne connait pas la liste complète des étudiants.</i>';
     var corps = $('<div></div>');
     var optionCards = $('<div></div>').addClass('optionCards');
     $('<button></button>').html('<i class="fa fa-external-link" aria-hidden="true"></i> Moodle').attr('onClick', 'uvMoodle("' + task.subject + '")').appendTo(optionCards);
@@ -1813,7 +1841,9 @@ var generateWeeks = function (weeks, week) {
   console.log(weeks)
   if (window.get.mode == 'semaine') {
     $('#mode_semaine').prop('checked', true);
-    $('#mode_week').text(' Semaine du ' + week.split('-')[2] + '/' + week.split('-')[1] + ':');
+
+    if (week)
+      $('#mode_week').text(' Semaine du ' + week.split('-')[2] + '/' + week.split('-')[1] + ':');
   }
   else if (window.get.mode == 'comparer')
     $('#mode_comparer').prop('checked', true);
@@ -1821,7 +1851,8 @@ var generateWeeks = function (weeks, week) {
     $('#mode_modifier').prop('checked', true);
   else if (window.get.mode == 'organiser') {
     $('#mode_organiser').prop('checked', true);
-    $('#mode_week').text(' Semaine du ' + week.split('-')[2] + '/' + week.split('-')[1] + ':');
+    if (week)
+      $('#mode_week').text(' Semaine du ' + week.split('-')[2] + '/' + week.split('-')[1] + ':');
   }
   else
     $('#mode_classique').prop('checked', true);
@@ -2229,7 +2260,7 @@ var generateCards = function (schedulerTasks, tasks, day, sides, uvs) {
 
         if (isUV) {
           type = (task.type == 'D' ? 'TD' : (task.type == 'T' ? 'TP' : 'Cours'));
-          $('<h5></h5>').text(type + ' ' + task.groupe).appendTo(subject);
+          $('<h5></h5>').text(type + ' ' + task.group).appendTo(subject);
         }
 
         console.log(task)

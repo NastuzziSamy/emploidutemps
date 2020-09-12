@@ -208,7 +208,7 @@ CREATE TABLE `uvs` (
   `id` int(11) NOT NULL,
   `uv` char(5) COLLATE utf8_bin NOT NULL,
   `type` char(1) COLLATE utf8_bin NOT NULL,
-  `groupe` mediumint(9) NOT NULL,
+  `group` mediumint(9) NOT NULL,
   `day` smallint(6) NOT NULL,
   `begin` char(5) COLLATE utf8_bin NOT NULL,
   `end` char(5) COLLATE utf8_bin NOT NULL,
@@ -262,7 +262,8 @@ CREATE TABLE `uvs_followed` (
   `login` char(16) COLLATE utf8_bin NOT NULL,
   `color` char(8) COLLATE utf8_bin DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `exchanged` tinyint(1) NOT NULL DEFAULT '0'
+  `exchanged` tinyint(1) NOT NULL DEFAULT '0',
+  `visio` char(1) COLLATE utf8_bin DEFAULT  NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------

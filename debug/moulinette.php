@@ -1,51 +1,5 @@
 <?php
 
-class DB extends PDO {
-  public function __construct () {
-    try { parent::__construct('mysql'.':host=localhost; dbname=emploidutemps; charset=utf8', 'root', 'root', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC)); }
-    catch (PDOException $e)  { DB::meurt('__construct', $e); }
-        }
-
-        public function execute($s, $p) {
-                try { return $s->execute($p); }
-                catch (PDOException $e) { DB::meurt('execute', $e); }
-        }
-
-        public function exec($p) {
-                try { return parent::exec($p); }
-                catch (PDOException $e) { DB::meurt('exec', $e); }
-        }
-
-        public function query($p)       {
-                try { return parent::query($p); }
-                catch (PDOException $e) { DB::meurt('query', $e); }
-        }
-
-  public function request($req, $args = array(), $types = array()) {
-                try {
-      $query = parent::prepare($req);
-
-      if ($args != array()) {
-        foreach ($args as $key => $arg) {
-          if (isset($types[$key+1]))
-            $query->bindParam($key+1, $args[$key], $types[$key+1]);
-          else
-            $query->bindParam($key+1, $args[$key]);
-        }
-      }
-
-      $query->execute();
-
-      return $query;
-    }
-                catch (PDOException $e) { DB::meurt('request', $e); }
-  }
-
-        private static function meurt($type, PDOException $e)   {
-          echo $e->getMessage();
-        }
-}
-
 function insertSalle($salle, $type, $jour, $debut, $fin) {
   $debutDispo = array(8 => '08:00', 9 => '09:00', 10 => '10:15', 11 => '11:15', 12 => '12:15', 13 => '13:15', 14 => '14:15', 15 => '15:15', 16 => '16:30', 17 => '17:30', 18=> '18:30', 19 => '19:30');
   $finDispo = array(8 => '08:00', 9 => '09:00', 10 => '10:00', 11 => '11:15', 12 => '12:15', 13 => '13:15', 14 => '14:15', 15 => '15:15', 16 => '16:15', 17 => '17:30', 18 => '18:30', 19 => '19:30', 20 => '20:30', 21 => '21:00');
@@ -99,8 +53,6 @@ function getARandomColor() {
   return $GLOBALS['colors'][mt_rand(1, count($GLOBALS['colors'])) - 1];
 }
 
-$db = new DB();
-
 $personne = include('off.php');
 $days = ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI', 'DIMANCHE'];
 $nbr = count($personne);
@@ -109,7 +61,7 @@ foreach ($personne as $key => $elem) {
   $login = $elem['login'];
 
   try {
-    $uvs = json_decode(file_get_contents("$WS_DSI?login=$login"));
+    $uvs = json_decode(file_get_contents("https://webapplis.utc.fr/Edt_ent_rest/myedt/result/?login=$login"));
 
     $s = array_unique(array_map(function ($uv) {
       return $uv->uv;
@@ -122,10 +74,10 @@ foreach ($personne as $key => $elem) {
   }
 
   if (count($uvs)) {
-    $ginger = json_decode(file_get_contents("$LOVELY_GINGER/$login?key=$KEY"));
+    $ginger = json_decode(file_get_contents("3aGfOI8QewcmQNmn9jiNZdJyAETJ3vuCfKlpw/$login?key=$KEY"));
 
 
-    $db->request('INSERT INTO students(login, surname, firstname, email, semester, uvs, nbrUV) VALUES(?, ?, ?, ?, "N/A", ?, ?)', [
+    $GLOBALS['db']->request('INSERT INTO students(login, surname, firstname, email, semester, uvs, nbrUV) VALUES(?, ?, ?, ?, "N/A", ?, ?)', [
     $login, $ginger->nom, $ginger->prenom, $ginger->mail, implode(', ', $s), count($s)
     ]);
   }
@@ -159,27 +111,27 @@ foreach ($personne as $key => $elem) {
       $frequency = 1;
     }
 
-    $r = $db->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ?', [
+    $r = $GLOBALS['db']->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ?', [
       $name, $type, $group,
     ]);
 
     if ($r->rowCount() === 0) {
-      $db->request('INSERT INTO uvs(uv, type, group, day, begin, end, room, frequency, week) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+      $GLOBALS['db']->request('INSERT INTO uvs(uv, type, group, day, begin, end, room, frequency, week) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         $name, $type, $group, $day, $uv->begin, $uv->end, $room, $frequency, $week
       ]);
 
-      $r = $db->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ?', [
+      $r = $GLOBALS['db']->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ?', [
         $name, $type, $group,
       ]);
 
       $id = $r->fetch()['id'];
 
-      $r = $db->request('SELECT * FROM uvs_colors WHERE uv = ?', [
+      $r = $GLOBALS['db']->request('SELECT * FROM uvs_colors WHERE uv = ?', [
         $name
       ]);
 
       if ($r->rowCount() === 0) {
-        $db->request('INSERT INTO uvs_colors(uv, color) VALUES(?, ?)', [
+        $GLOBALS['db']->request('INSERT INTO uvs_colors(uv, color) VALUES(?, ?)', [
           $name, getARandomColor()
         ]);
       }
@@ -187,10 +139,10 @@ foreach ($personne as $key => $elem) {
       $fetch = $r->fetch();
       $id = $fetch['id'];
 
-      $db->request('UPDATE uvs SET nbrEtu = ? WHERE id = ?', [$fetch['nbrEtu'] + 1, $id]);
+      $GLOBALS['db']->request('UPDATE uvs SET nbrEtu = ? WHERE id = ?', [$fetch['nbrEtu'] + 1, $id]);
     }
 
-    $db->request('INSERT INTO uvs_followed(idUV, login, color, enabled, exchanged) VALUES(?, ?, null, 1, 0)', [
+    $GLOBALS['db']->request('INSERT INTO uvs_followed(idUV, login, color, enabled, exchanged) VALUES(?, ?, null, 1, 0)', [
       $id, $login
     ]);
   }

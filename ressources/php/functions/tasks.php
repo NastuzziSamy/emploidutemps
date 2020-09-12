@@ -45,7 +45,7 @@ function addTask($taskType, $info, $infosArrays, $side = NULL) {
       $task['location'] = $infosArray['room'];
       $task['idUV'] = intval($infosArray['idUV']);
       $task['type'] = $infosArray['type'];
-      $task['groupe'] = intval($infosArray['groupe']);
+      $task['group'] = intval($infosArray['group']);
       $task['frequency'] = intval($infosArray['frequency']);
       $task['nbrEtu'] = intval($infosArray['nbrEtu']);
       if ($infosArray['week'] != '') {
@@ -61,7 +61,7 @@ function addTask($taskType, $info, $infosArrays, $side = NULL) {
       $task['location'] = $infosArray['room'];
       $task['idUV'] = intval($infosArray['id']);
       $task['type'] = $infosArray['type'];
-      $task['groupe'] = intval($infosArray['groupe']);
+      $task['group'] = intval($infosArray['group']);
       $task['nbrEtu'] = intval($infosArray['nbrEtu']);
       $task['note'] = intval($infosArray['nbrEtu']).' étudiants';
       $task['frequency'] = intval($infosArray['frequency']);
@@ -184,7 +184,7 @@ function printExchangesReceived($login, $option = NULL) {
       FROM students, exchanges_sent
       WHERE students.login = exchanges_sent.login AND exchanges_sent.id = ?
       LIMIT 1',
-        [$infos['idSent']]
+        array($infos['idSent'])
       );
 
       if ($query->rowCount() == 1) {
@@ -248,7 +248,7 @@ function printExchangesSent($login, $option = NULL) {
       FROM students, exchanges_received
       WHERE students.login = exchanges_received.login AND exchanges_received.id = ?
       LIMIT 1',
-        [$infos['idReceived']]
+        array($infos['idReceived'])
       );
 
       if ($query->rowCount() == 1) {

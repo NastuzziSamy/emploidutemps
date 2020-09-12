@@ -62,9 +62,9 @@ try {
   $c = count($s);
 
 
-  $r = $db->request('SELECT * FROM students WHERE login = ?', [
+  $r = $db->request('SELECT * FROM students WHERE login = ?', array(
     $login,
-  ]);
+  ));
 
   if ($r->rowCount()) {
     return;
@@ -79,13 +79,14 @@ try {
   echo "Error for $login\n";
 }
 
-if (count($uvs)) {
-  $ginger = json_decode(file_get_contents("https://assos.utc.fr/ginger/v1/$login?key=3aGfOI8QewcmQNmn9jiNZdJyAETJ3vuCfKlpw"));
+// Avec le Covid, on se fiche de récupérer les uvs des gens.
+// if (count($uvs)) {
+  $ginger = json_decode(file_get_contents("https://assos.utc.fr/ginger/v1/$login?key=".GINGER_KEY));
 
-  $db->request('INSERT INTO students(login, surname, firstname, email, semester, uvs, nbrUV) VALUES(?, ?, ?, ?, "N/A", ?, ?)', [
+  $db->request('INSERT INTO students(login, surname, firstname, email, semester, uvs, nbrUV) VALUES(?, ?, ?, ?, "N/A", ?, ?)', array(
     $login, $ginger->nom, $ginger->prenom, $ginger->mail, substr(implode(', ', $s), 0, 64), count($s)
-  ]);
-}
+  ));
+// }
 
 foreach ($uvs as $uv) {
   $name = $uv->uv;
@@ -120,20 +121,21 @@ foreach ($uvs as $uv) {
     $frequency = 1;
   }
 
-  $r = $db->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND groupe = ?', array(
+  $r = $db->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ?', array(
     $name, $type, $group,
   ));
 
   if ($r->rowCount() === 0) {
-    $db->request('INSERT INTO uvs(uv, type, groupe, day, begin, end, room, frequency, week) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', array(
+    $db->request('INSERT INTO uvs(uv, type, uvs.group, day, begin, end, room, frequency, week) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', array(
       $name, $type, $group, $day, $uv->begin, $uv->end, $room, $frequency, $week
     ));
 
-    $r = $db->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND groupe = ?', array(
+    $r = $db->request('SELECT * FROM uvs WHERE uv = ? AND type = ? AND uvs.group = ?', array(
       $name, $type, $group,
     ));
 
-    $id = $r->fetch()['id'];
+    $fetch = $r->fetch()['id'];
+    $id = $fetch['id'];
 
     $r = $db->request('SELECT * FROM uvs_colors WHERE uv = ?', array(
       $name
