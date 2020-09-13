@@ -1,6 +1,6 @@
 <?php include($_SERVER['DOCUMENT_ROOT'].'/emploidutemps'.'/ressources/php/include.php');
 
-const FORMAT_STUDENT = '/^([a-z0-9]{1,10})\s+([A-Z0-9]{3,5})\s+([0-9]{1,2})\s+(([A-Z0-9]{3,5}\s*)+)$/';
+const FORMAT_STUDENT = '/^\s*([a-z0-9]{1,10})\s+([A-Z0-9]{3,5})\s+([0-9]{1,2})\s+(([A-Z0-9]{3,5}\s*)+)$/';
 
 const FORMAT_UV = '/^([A-Z0-9]{3,5})\s+([CDT])\s+([0-9]+)\s+/';
 const FORMAT_SLOT = '/^\s*([ABC]*)\s*([A-Z]+)\.*\s*([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2}),*\s*F([0-9]+),*\s*S=([A-Z0-9]*)\s*(?>\(.*semaine ([ABC]) en distanciel\))*$/';
